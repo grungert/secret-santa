@@ -557,6 +557,28 @@ body {
   animation: santa-fly 18s linear infinite;
 }
 
+/* Cloud drift animations - different speeds for depth effect */
+@keyframes cloud-drift {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100vw);
+  }
+}
+
+.animate-cloud-slow {
+  animation: cloud-drift 80s linear infinite;
+}
+
+.animate-cloud-medium {
+  animation: cloud-drift 50s linear infinite;
+}
+
+.animate-cloud-fast {
+  animation: cloud-drift 30s linear infinite;
+}
+
 /* ========================================
    REDUCED MOTION
    ======================================== */
