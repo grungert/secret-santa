@@ -4,24 +4,35 @@ import { ButtonHTMLAttributes, forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface PixelButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "danger" | "success";
+  variant?: "primary" | "secondary" | "danger" | "success" | "neonPink" | "neonCyan" | "neonGreen" | "neonOrange" | "neonYellow";
   size?: "sm" | "md" | "lg";
 }
 
 const PixelButton = forwardRef<HTMLButtonElement, PixelButtonProps>(
   ({ className, variant = "primary", size = "md", children, disabled, ...props }, ref) => {
     const baseStyles =
-      "font-pixel uppercase tracking-wider border-4 transition-all duration-150 active:translate-y-1 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed disabled:active:translate-y-0";
+      "font-pixel uppercase tracking-wider border-4 transition-all duration-200 active:translate-y-1 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:translate-y-0 backdrop-blur-sm";
 
     const variants = {
+      // Neon variants (new 80s style)
       primary:
-        "bg-santa-red border-santa-red-dark text-snow-white hover:bg-santa-red-dark pixel-shadow hover:pixel-shadow-hover",
+        "bg-black/40 border-neon-pink text-neon-pink neon-glow-pink hover:bg-neon-pink/20 hover:animate-neon-tube",
       secondary:
-        "bg-christmas-green border-christmas-green-dark text-snow-white hover:bg-christmas-green-dark pixel-shadow hover:pixel-shadow-hover",
+        "bg-black/40 border-neon-cyan text-neon-cyan neon-glow-cyan hover:bg-neon-cyan/20 hover:animate-neon-tube",
       danger:
-        "bg-red-600 border-red-800 text-snow-white hover:bg-red-700 pixel-shadow hover:pixel-shadow-hover",
+        "bg-black/40 border-neon-red text-neon-red neon-glow-red hover:bg-neon-red/20 hover:animate-neon-tube",
       success:
-        "bg-emerald-600 border-emerald-800 text-snow-white hover:bg-emerald-700 pixel-shadow hover:pixel-shadow-hover",
+        "bg-black/40 border-neon-green text-neon-green neon-glow-green hover:bg-neon-green/20 hover:animate-neon-tube",
+      neonPink:
+        "bg-black/40 border-neon-pink text-neon-pink neon-glow-pink hover:bg-neon-pink/20 hover:animate-neon-tube",
+      neonCyan:
+        "bg-black/40 border-neon-cyan text-neon-cyan neon-glow-cyan hover:bg-neon-cyan/20 hover:animate-neon-tube",
+      neonGreen:
+        "bg-black/40 border-neon-green text-neon-green neon-glow-green hover:bg-neon-green/20 hover:animate-neon-tube",
+      neonOrange:
+        "bg-black/40 border-neon-orange text-neon-orange neon-glow-orange hover:bg-neon-orange/20 hover:animate-neon-tube",
+      neonYellow:
+        "bg-black/40 border-neon-yellow text-neon-yellow neon-glow-yellow hover:bg-neon-yellow/20 hover:animate-neon-tube",
     };
 
     const sizes = {

@@ -32,53 +32,61 @@ export default function AvatarCard({
       onMouseLeave={() => setIsHovering(false)}
       disabled={!canClick}
       className={cn(
-        "relative p-4 border-4 transition-all duration-200",
+        "relative p-4 border-4 transition-all duration-300",
         "flex flex-col items-center justify-center gap-2",
+        "backdrop-blur-sm",
         // Base styling
-        "bg-midnight/60",
+        "bg-black/40",
         // States
         canClick && "cursor-pointer hover:scale-105",
-        canClick && isHovering && "border-gold animate-pulse-glow",
-        !canClick && "cursor-default opacity-70",
+        canClick && isHovering && "border-neon-pink neon-glow-pink",
+        !canClick && "cursor-default opacity-60",
         // Current player
-        isCurrentPlayer && "border-christmas-green bg-christmas-green/20",
+        isCurrentPlayer && "border-neon-green bg-neon-green/10 neon-glow-green",
         // Selected
-        selected && "border-gold bg-gold/20 scale-105",
+        selected && "border-neon-yellow bg-neon-yellow/10 scale-105 neon-glow-yellow",
         // Default border
-        !isCurrentPlayer && !selected && !isHovering && "border-frost-blue/50",
-        // Shadow
-        "pixel-shadow"
+        !isCurrentPlayer && !selected && !isHovering && "border-neon-cyan/30",
       )}
     >
-      {/* Avatar */}
-      <div className={cn(
-        "transition-transform duration-300",
-        isHovering && canClick && "animate-pixel-bounce"
-      )}>
-        <PixelAvatar
-          avatarId={avatarId}
-          size="lg"
-          showMystery={false}
+      {/* Neon glow effect behind avatar on hover */}
+      {canClick && isHovering && (
+        <div
+          className="absolute inset-0 opacity-30 blur-xl"
+          style={{
+            background: "radial-gradient(circle, var(--neon-pink) 0%, transparent 70%)",
+          }}
         />
+      )}
+
+      {/* Avatar */}
+      <div
+        className={cn(
+          "relative transition-transform duration-300",
+          isHovering && canClick && "animate-pixel-bounce",
+          isHovering && canClick && "drop-shadow-[0_0_10px_var(--neon-pink)]"
+        )}
+      >
+        <PixelAvatar avatarId={avatarId} size="lg" showMystery={false} />
       </div>
 
-      {/* Status indicator */}
+      {/* Status indicator - YOU badge */}
       {isCurrentPlayer && (
-        <span className="absolute top-2 right-2 text-sm bg-christmas-green px-2 py-1 border-2 border-christmas-green-dark">
+        <span className="absolute top-2 right-2 text-sm bg-black/60 text-neon-green px-2 py-1 border-2 border-neon-green neon-glow-green">
           YOU
         </span>
       )}
 
       {/* Revealed indicator */}
       {hasRevealed && !isCurrentPlayer && (
-        <span className="absolute top-2 left-2 text-sm bg-gold text-midnight px-2 py-1 border-2 border-yellow-600">
+        <span className="absolute top-2 left-2 text-sm bg-black/60 text-neon-yellow px-2 py-1 border-2 border-neon-yellow">
           ✓
         </span>
       )}
 
       {/* Click hint */}
       {canClick && isHovering && (
-        <span className="text-sm text-gold animate-pulse">
+        <span className="text-sm neon-text-pink animate-pulse">
           Click to reveal!
         </span>
       )}

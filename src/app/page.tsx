@@ -6,6 +6,7 @@ import AvatarGrid from "@/components/game/AvatarGrid";
 import RevealModal from "@/components/game/RevealModal";
 import PixelCard from "@/components/ui/PixelCard";
 import PixelAvatar from "@/components/game/PixelAvatar";
+import GlitchText from "@/components/effects/GlitchText";
 import { PlayerGameView } from "@/types";
 
 const STORAGE_KEY = "secret-santa-player";
@@ -148,7 +149,7 @@ export default function PlayerPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl animate-pixel-bounce mb-4">🎅</div>
-          <p className="text-2xl text-gold">Loading...</p>
+          <p className="text-2xl neon-text-pink animate-pulse">Loading...</p>
         </div>
       </div>
     );
@@ -159,10 +160,14 @@ export default function PlayerPage() {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center p-4">
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl text-gold mb-2">
-            🎄 Secret Santa 🎄
-          </h1>
-          <p className="text-xl text-frost-blue">New Year 2026</p>
+          <GlitchText
+            text="SECRET SANTA"
+            as="h1"
+            className="text-4xl md:text-6xl neon-text-pink mb-2"
+            glitchIntensity="medium"
+            continuous
+          />
+          <p className="text-xl neon-text-cyan animate-pulse">New Year 2026</p>
         </div>
 
         <LoginForm onLogin={handleLogin} error={loginError} loading={loading} />
@@ -170,7 +175,7 @@ export default function PlayerPage() {
         <div className="mt-8">
           <a
             href="/admin"
-            className="text-sm text-gray-400 hover:text-frost-blue transition-colors"
+            className="text-sm text-gray-400 hover:text-neon-cyan transition-colors"
           >
             Admin Panel →
           </a>
@@ -184,18 +189,22 @@ export default function PlayerPage() {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center p-4">
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl text-gold mb-2">
-            🎄 Secret Santa 🎄
-          </h1>
-          <p className="text-xl text-frost-blue">New Year 2026</p>
+          <GlitchText
+            text="SECRET SANTA"
+            as="h1"
+            className="text-4xl md:text-6xl neon-text-pink mb-2"
+            glitchIntensity="medium"
+            continuous
+          />
+          <p className="text-xl neon-text-cyan animate-pulse">New Year 2026</p>
         </div>
 
         <PixelCard variant="highlight" className="max-w-md text-center">
           <div className="text-4xl animate-pixel-float mb-4">⏳</div>
-          <h2 className="text-2xl text-gold mb-2">
+          <h2 className="text-2xl neon-text-yellow mb-2">
             Welcome, {gameView?.currentPlayer?.name || playerName}!
           </h2>
-          <p className="text-frost-blue mb-4">
+          <p className="text-neon-cyan mb-4">
             The game hasn&apos;t started yet. Wait for the admin to set everything up!
           </p>
           <p className="text-sm text-gray-400">
@@ -205,7 +214,7 @@ export default function PlayerPage() {
 
         <button
           onClick={handleLogout}
-          className="mt-4 text-sm text-gray-400 hover:text-frost-blue transition-colors"
+          className="mt-4 text-sm text-gray-400 hover:text-neon-cyan transition-colors"
         >
           Logout
         </button>
@@ -218,31 +227,39 @@ export default function PlayerPage() {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center p-4">
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl text-gold mb-2">
-            🎄 Secret Santa 🎄
-          </h1>
-          <p className="text-xl text-frost-blue">New Year 2026</p>
+          <GlitchText
+            text="SECRET SANTA"
+            as="h1"
+            className="text-4xl md:text-6xl neon-text-pink mb-2"
+            glitchIntensity="medium"
+            continuous
+          />
+          <p className="text-xl neon-text-cyan animate-pulse">New Year 2026</p>
         </div>
 
         <PixelCard variant="highlight" className="max-w-md text-center">
-          <p className="text-frost-blue mb-4">
+          <p className="text-neon-cyan mb-4">
             Hey {gameView.currentPlayer.name}! Your Secret Santa assignment:
           </p>
 
           <div className="flex flex-col items-center gap-4 my-6">
-            <div className="bg-midnight p-4 border-4 border-gold pixel-shadow animate-pulse-glow">
+            <div className="bg-black/60 p-4 border-4 border-neon-pink neon-glow-pink animate-neon-pulse">
               <PixelAvatar
                 avatarId={gameView.currentPlayer.assignedToAvatarId || "mystery"}
                 size="lg"
               />
             </div>
-            <h2 className="text-4xl text-gold">
-              {gameView.currentPlayer.assignedToName}
-            </h2>
+            <GlitchText
+              text={gameView.currentPlayer.assignedToName}
+              as="h2"
+              className="text-4xl neon-text-yellow"
+              glitchIntensity="subtle"
+              continuous={false}
+            />
           </div>
 
-          <p className="text-frost-blue">
-            🎁 Buy them a nice gift! 🎁
+          <p className="neon-text-green animate-pulse">
+            ★ Buy them a nice gift! ★
           </p>
 
           <div className="mt-6 text-sm text-gray-400">
@@ -254,7 +271,7 @@ export default function PlayerPage() {
 
         <button
           onClick={handleLogout}
-          className="mt-4 text-sm text-gray-400 hover:text-frost-blue transition-colors"
+          className="mt-4 text-sm text-gray-400 hover:text-neon-cyan transition-colors"
         >
           Logout
         </button>
@@ -268,22 +285,26 @@ export default function PlayerPage() {
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl text-gold mb-2">
-            🎄 Secret Santa 🎄
-          </h1>
-          <p className="text-xl text-frost-blue">New Year 2026</p>
-          <p className="text-lg text-snow-white mt-4">
-            Welcome, <span className="text-gold">{gameView.currentPlayer?.name}</span>!
+          <GlitchText
+            text="SECRET SANTA"
+            as="h1"
+            className="text-4xl md:text-6xl neon-text-pink mb-2"
+            glitchIntensity="medium"
+            continuous
+          />
+          <p className="text-xl neon-text-cyan animate-pulse">New Year 2026</p>
+          <p className="text-lg text-white mt-4">
+            Welcome, <span className="neon-text-yellow">{gameView.currentPlayer?.name}</span>!
           </p>
         </div>
 
         {/* Instructions */}
         <PixelCard variant="dark" className="mb-8 text-center">
-          <p className="text-xl text-frost-blue">
+          <p className="text-xl text-neon-cyan">
             Click on any avatar (except yours) to reveal who you&apos;ll buy a gift for!
           </p>
           <p className="text-sm text-gray-400 mt-2">
-            Choose wisely - you can only reveal once! 🎁
+            Choose wisely - you can only reveal once! ★
           </p>
         </PixelCard>
 
@@ -301,7 +322,7 @@ export default function PlayerPage() {
           </p>
           <button
             onClick={handleLogout}
-            className="text-sm text-gray-400 hover:text-frost-blue transition-colors"
+            className="text-sm text-gray-400 hover:text-neon-cyan transition-colors"
           >
             Logout
           </button>

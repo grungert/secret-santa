@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { VT323 } from "next/font/google";
 import "./globals.css";
-import SnowEffect from "@/components/effects/SnowEffect";
+import LayeredBackground from "@/components/effects/LayeredBackground";
+import ScanlineOverlay from "@/components/effects/ScanlineOverlay";
 
 const pixelFont = VT323({
   weight: "400",
@@ -22,8 +23,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${pixelFont.variable} font-pixel antialiased`}>
-        <SnowEffect density={60} />
+        {/* Layered pixel art background */}
+        <LayeredBackground />
+
+        {/* Main content */}
         <div className="relative z-10">{children}</div>
+
+        {/* CRT overlay effects (on top) */}
+        <ScanlineOverlay intensity="light" animated={true} />
       </body>
     </html>
   );

@@ -13,14 +13,18 @@ const PixelInput = forwardRef<HTMLInputElement, PixelInputProps>(
       <input
         ref={ref}
         className={cn(
-          "font-pixel text-xl px-4 py-3 bg-midnight border-4 text-snow-white placeholder-gray-400",
-          "focus:outline-none focus:ring-2 focus:ring-gold focus:border-gold",
-          "transition-all duration-150 pixel-shadow",
+          "font-pixel text-xl px-4 py-3 bg-black/60 border-4 text-white placeholder-gray-500 backdrop-blur-sm",
+          "focus:outline-none transition-all duration-200",
           error
-            ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-            : "border-frost-blue",
+            ? "border-neon-red focus:border-neon-red neon-glow-red"
+            : "border-neon-cyan/50 focus:border-neon-cyan focus:neon-glow-cyan",
           className
         )}
+        style={{
+          boxShadow: error
+            ? "0 0 10px var(--neon-red-glow)"
+            : undefined,
+        }}
         {...props}
       />
     );

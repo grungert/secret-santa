@@ -5,6 +5,7 @@ import ParticipantForm from "@/components/admin/ParticipantForm";
 import ParticipantList from "@/components/admin/ParticipantList";
 import GameControls from "@/components/admin/GameControls";
 import PixelCard from "@/components/ui/PixelCard";
+import GlitchText from "@/components/effects/GlitchText";
 import { GameState } from "@/types";
 
 export default function AdminPage() {
@@ -92,7 +93,7 @@ export default function AdminPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl animate-pixel-bounce mb-4">🎅</div>
-          <p className="text-2xl text-gold">Loading...</p>
+          <p className="text-2xl neon-text-pink animate-pulse">Loading...</p>
         </div>
       </div>
     );
@@ -102,8 +103,8 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <PixelCard variant="dark" className="text-center p-8">
-          <p className="text-2xl text-santa-red mb-4">Error</p>
-          <p className="text-frost-blue">{error}</p>
+          <p className="text-2xl text-neon-red mb-4">Error</p>
+          <p className="text-neon-cyan">{error}</p>
         </PixelCard>
       </div>
     );
@@ -121,10 +122,14 @@ export default function AdminPage() {
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-4xl md:text-6xl text-gold mb-2">
-            🎄 Admin Panel 🎄
-          </h1>
-          <p className="text-xl text-frost-blue">
+          <GlitchText
+            text="ADMIN PANEL"
+            as="h1"
+            className="text-4xl md:text-6xl neon-text-pink mb-2"
+            glitchIntensity="medium"
+            continuous
+          />
+          <p className="text-xl neon-text-cyan animate-pulse">
             Secret Santa 2026
           </p>
         </div>
@@ -133,7 +138,7 @@ export default function AdminPage() {
           {/* Left column: Participants */}
           <div className="space-y-4">
             <PixelCard>
-              <h2 className="text-2xl text-gold mb-4">Participants</h2>
+              <h2 className="text-2xl neon-text-yellow mb-4">Participants</h2>
 
               {/* Add form - only in setup mode */}
               {isSetup && (
@@ -167,10 +172,10 @@ export default function AdminPage() {
 
             {/* Instructions */}
             <PixelCard variant="dark">
-              <h3 className="text-xl text-gold mb-3">How it works</h3>
-              <ol className="space-y-2 text-frost-blue text-sm">
+              <h3 className="text-xl neon-text-green mb-3">How it works</h3>
+              <ol className="space-y-2 text-neon-cyan text-sm">
                 <li>1. Add all participant names</li>
-                <li>2. Click "Start Game" to assign Secret Santas</li>
+                <li>2. Click &quot;Start Game&quot; to assign Secret Santas</li>
                 <li>3. Share the main page link with everyone</li>
                 <li>4. Each person logs in and clicks an avatar</li>
                 <li>5. They see who they should buy a gift for!</li>
@@ -183,7 +188,7 @@ export default function AdminPage() {
         <div className="text-center">
           <a
             href="/"
-            className="text-frost-blue hover:text-gold transition-colors"
+            className="text-neon-cyan hover:text-neon-pink transition-colors"
           >
             ← Go to Player Page
           </a>
