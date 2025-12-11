@@ -4,7 +4,7 @@ import { ButtonHTMLAttributes, forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface PixelButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "danger" | "success" | "neonPink" | "neonCyan" | "neonGreen" | "neonOrange" | "neonYellow";
+  variant?: "primary" | "secondary" | "danger" | "success" | "neonPink" | "neonCyan" | "neonGreen" | "neonOrange" | "neonYellow" | "retro";
   size?: "sm" | "md" | "lg";
 }
 
@@ -33,6 +33,8 @@ const PixelButton = forwardRef<HTMLButtonElement, PixelButtonProps>(
         "bg-black/40 border-neon-orange text-neon-orange neon-glow-orange hover:bg-neon-orange/20 hover:animate-neon-tube",
       neonYellow:
         "bg-black/40 border-neon-yellow text-neon-yellow neon-glow-yellow hover:bg-neon-yellow/20 hover:animate-neon-tube",
+      retro:
+        "bg-[#2d1b4e] border-[#8b5cf6] text-white shadow-[inset_0_-4px_0_0_#1a0f2e,inset_0_4px_0_0_#4c1d95,0_0_20px_#8b5cf680,0_0_40px_#8b5cf640] hover:bg-[#3d2b5e] hover:shadow-[inset_0_-4px_0_0_#1a0f2e,inset_0_4px_0_0_#4c1d95,0_0_30px_#8b5cf6,0_0_60px_#8b5cf680] hover:scale-105 active:shadow-[inset_0_4px_0_0_#1a0f2e,0_0_20px_#8b5cf680]",
     };
 
     const sizes = {

@@ -24,7 +24,7 @@ export default function LayeredBackground() {
   return (
     <>
       {/* Main background container */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+      <div className="layered-bg fixed inset-0 overflow-hidden pointer-events-none z-0">
         {/* Layer 1: Sky background - static */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -35,13 +35,13 @@ export default function LayeredBackground() {
         <img
           src="/imgs/clouds/cloud-01.png"
           alt=""
-          className="absolute top-[15%] w-[20vw] max-w-[250px] opacity-40 animate-cloud-slow"
+          className="absolute top-[45%] w-[20vw] max-w-[250px] opacity-40 animate-cloud-slow"
           style={{ imageRendering: "pixelated", animationDelay: "0s" }}
         />
         <img
           src="/imgs/clouds/cloud-03.png"
           alt=""
-          className="absolute top-[25%] w-[18vw] max-w-[220px] opacity-35 animate-cloud-slow"
+          className="absolute top-[55%] w-[18vw] max-w-[220px] opacity-35 animate-cloud-slow"
           style={{ imageRendering: "pixelated", animationDelay: "-40s" }}
         />
 
@@ -60,13 +60,13 @@ export default function LayeredBackground() {
         <img
           src="/imgs/clouds/cloud-02.png"
           alt=""
-          className="absolute top-[10%] w-[22vw] max-w-[280px] opacity-50 animate-cloud-medium"
+          className="absolute top-[40%] w-[22vw] max-w-[280px] opacity-50 animate-cloud-medium"
           style={{ imageRendering: "pixelated", animationDelay: "-15s" }}
         />
         <img
           src="/imgs/clouds/cloud-04.png"
           alt=""
-          className="absolute top-[30%] w-[20vw] max-w-[250px] opacity-45 animate-cloud-medium"
+          className="absolute top-[50%] w-[20vw] max-w-[250px] opacity-45 animate-cloud-medium"
           style={{ imageRendering: "pixelated", animationDelay: "-35s" }}
         />
 
@@ -83,17 +83,17 @@ export default function LayeredBackground() {
       </div>
 
       {/* Layer 6: Foreground clouds - in front of everything (fastest) */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-[2]">
+      <div className="layered-bg fixed inset-0 overflow-hidden pointer-events-none z-[2]">
         <img
           src="/imgs/clouds/cloud-01.png"
           alt=""
-          className="absolute top-[5%] w-[25vw] max-w-[320px] opacity-70 animate-cloud-fast"
+          className="absolute top-[8%] w-[25vw] max-w-[320px] opacity-70 animate-cloud-fast"
           style={{ imageRendering: "pixelated", animationDelay: "-10s" }}
         />
         <img
           src="/imgs/clouds/cloud-02.png"
           alt=""
-          className="absolute top-[35%] w-[22vw] max-w-[280px] opacity-60 animate-cloud-fast"
+          className="absolute top-[52%] w-[22vw] max-w-[280px] opacity-60 animate-cloud-fast"
           style={{ imageRendering: "pixelated", animationDelay: "-20s" }}
         />
       </div>

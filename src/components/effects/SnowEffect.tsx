@@ -99,7 +99,7 @@ export default function SnowEffect({ density = 50, className = "" }: SnowEffectP
   return (
     <canvas
       ref={canvasRef}
-      className={`fixed inset-0 pointer-events-none z-[1] ${className}`}
+      className={`snow-effect fixed inset-0 pointer-events-none z-[1] ${className}`}
       style={{ imageRendering: "pixelated" }}
     />
   );

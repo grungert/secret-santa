@@ -1,38 +1,38 @@
 {
-  "id": "024ac0f6-89c2-4e9c-b7ac-270b1795d75a",
+  "id": "4470f7de-69df-41ae-8b31-f4642723eba8",
   "status": "active",
   "participants": [
     {
-      "id": "2b78f079-bb2f-47cc-8e81-78b1a078fb5e",
+      "id": "e0e458c4-392b-4d8c-ac8c-493e99e9647e",
       "name": "Bojan",
       "normalizedName": "bojan",
-      "avatarId": "present-red",
-      "assignedToId": "8c052cd2-1f4c-45cd-9b0f-f193628f17fc",
-      "hasRevealed": true,
-      "revealedAt": "2025-12-11T11:03:26.198Z",
-      "createdAt": "2025-12-11T11:01:15.361Z"
-    },
-    {
-      "id": "8c052cd2-1f4c-45cd-9b0f-f193628f17fc",
-      "name": "Kaca",
-      "normalizedName": "kaca",
-      "avatarId": "gingerbread",
-      "assignedToId": "b4aec7ca-9abc-410a-be70-3ef1dd49f64e",
-      "hasRevealed": true,
-      "revealedAt": "2025-12-11T14:32:18.169Z",
-      "createdAt": "2025-12-11T11:01:18.558Z"
-    },
-    {
-      "id": "b4aec7ca-9abc-410a-be70-3ef1dd49f64e",
-      "name": "Tesa",
-      "normalizedName": "tesa",
-      "avatarId": "elf-happy",
-      "assignedToId": "2b78f079-bb2f-47cc-8e81-78b1a078fb5e",
+      "avatarId": "snowman-hat",
+      "assignedToId": "31802c40-43eb-4015-8d17-bd93b5546479",
       "hasRevealed": false,
       "revealedAt": null,
-      "createdAt": "2025-12-11T11:01:23.692Z"
+      "createdAt": "2025-12-11T14:56:20.075Z"
+    },
+    {
+      "id": "31802c40-43eb-4015-8d17-bd93b5546479",
+      "name": "kaca",
+      "normalizedName": "kaca",
+      "avatarId": "gingerbread",
+      "assignedToId": "1e309996-baa6-4191-9608-3d0b0625d1f5",
+      "hasRevealed": false,
+      "revealedAt": null,
+      "createdAt": "2025-12-11T14:56:23.448Z"
+    },
+    {
+      "id": "1e309996-baa6-4191-9608-3d0b0625d1f5",
+      "name": "Fico",
+      "normalizedName": "fico",
+      "avatarId": "santa-classic",
+      "assignedToId": "e0e458c4-392b-4d8c-ac8c-493e99e9647e",
+      "hasRevealed": false,
+      "revealedAt": null,
+      "createdAt": "2025-12-11T14:56:27.401Z"
     }
   ],
-  "createdAt": "2025-12-11T11:01:07.782Z",
-  "startedAt": "2025-12-11T11:01:26.868Z"
+  "createdAt": "2025-12-11T14:56:16.462Z",
+  "startedAt": "2025-12-11T14:56:28.844Z"
 }

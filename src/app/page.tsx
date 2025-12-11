@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import dynamic from "next/dynamic";
 import LoginForm from "@/components/game/LoginForm";
 import AvatarGrid from "@/components/game/AvatarGrid";
 import RevealModal from "@/components/game/RevealModal";
@@ -9,6 +10,12 @@ import PixelAvatar from "@/components/game/PixelAvatar";
 import GlitchText from "@/components/effects/GlitchText";
 import PixelButton from "@/components/ui/PixelButton";
 import { PlayerGameView } from "@/types";
+
+// Dynamically import ThreeBackground to avoid SSR issues with Three.js
+const ThreeBackground = dynamic(
+  () => import("@/components/effects/ThreeBackground"),
+  { ssr: false }
+);
 
 const STORAGE_KEY = "secret-santa-player";
 
@@ -173,9 +180,9 @@ export default function PlayerPage() {
 
           <PixelButton
             onClick={handleStart}
-            variant="neonPink"
+            variant="retro"
             size="lg"
-            className="text-2xl px-12 py-4 animate-neon-pulse"
+            className="text-2xl px-16 py-5 rounded-lg"
           >
             ▶ START
           </PixelButton>
@@ -187,7 +194,7 @@ export default function PlayerPage() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center relative z-10">
         <div className="text-center">
           <div className="text-6xl animate-pixel-bounce mb-4">🎅</div>
           <p className="text-2xl neon-text-pink animate-pulse">Loading...</p>
@@ -196,10 +203,10 @@ export default function PlayerPage() {
     );
   }
 
-  // Login screen
+  // Login screen - show 2D background (LayeredBackground from layout)
   if (!playerName) {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center p-4">
+      <main className="min-h-screen flex flex-col items-center justify-center p-4 relative z-10">
         <div className="text-center mb-8">
           <GlitchText
             text="SECRET SANTA"
@@ -225,161 +232,182 @@ export default function PlayerPage() {
     );
   }
 
-  // Game not started
+  // Game not started - Player logged in, show 3D background
   if (!gameView || gameView.status === "setup") {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center p-4">
-        <div className="text-center mb-8">
-          <GlitchText
-            text="SECRET SANTA"
-            as="h1"
-            className="text-4xl md:text-6xl neon-text-pink mb-2"
-            glitchIntensity="medium"
-            continuous
-          />
-          <p className="text-xl neon-text-cyan animate-pulse">New Year 2026</p>
-        </div>
+      <>
+        <ThreeBackground />
+        {/* Hide 2D background with CSS */}
+        <style jsx global>{`
+          .layered-bg, .snow-effect { display: none !important; }
+        `}</style>
+        <main className="min-h-screen flex flex-col items-center justify-center p-4 relative z-10">
+          <div className="text-center mb-8">
+            <GlitchText
+              text="SECRET SANTA"
+              as="h1"
+              className="text-4xl md:text-6xl neon-text-pink mb-2"
+              glitchIntensity="medium"
+              continuous
+            />
+            <p className="text-xl neon-text-cyan animate-pulse">New Year 2026</p>
+          </div>
 
-        <PixelCard variant="highlight" className="max-w-md text-center">
-          <div className="text-4xl animate-pixel-float mb-4">⏳</div>
-          <h2 className="text-2xl neon-text-yellow mb-2">
-            Welcome, {gameView?.currentPlayer?.name || playerName}!
-          </h2>
-          <p className="text-neon-cyan mb-4">
-            The game hasn&apos;t started yet. Wait for the admin to set everything up!
-          </p>
-          <p className="text-sm text-gray-400">
-            This page will automatically update when the game starts.
-          </p>
-        </PixelCard>
+          <PixelCard variant="highlight" className="max-w-md text-center">
+            <div className="text-4xl animate-pixel-float mb-4">⏳</div>
+            <h2 className="text-2xl neon-text-yellow mb-2">
+              Welcome, {gameView?.currentPlayer?.name || playerName}!
+            </h2>
+            <p className="text-neon-cyan mb-4">
+              The game hasn&apos;t started yet. Wait for the admin to set everything up!
+            </p>
+            <p className="text-sm text-gray-400">
+              This page will automatically update when the game starts.
+            </p>
+          </PixelCard>
 
-        <button
-          onClick={handleLogout}
-          className="mt-4 text-sm text-gray-400 hover:text-neon-cyan transition-colors"
-        >
-          Logout
-        </button>
-      </main>
+          <button
+            onClick={handleLogout}
+            className="mt-4 text-sm text-gray-400 hover:text-neon-cyan transition-colors"
+          >
+            Logout
+          </button>
+        </main>
+      </>
     );
   }
 
   // Player already revealed - show their assignment
   if (gameView.currentPlayer?.hasRevealed && gameView.currentPlayer.assignedToName) {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center p-4">
-        <div className="text-center mb-8">
-          <GlitchText
-            text="SECRET SANTA"
-            as="h1"
-            className="text-4xl md:text-6xl neon-text-pink mb-2"
-            glitchIntensity="medium"
-            continuous
-          />
-          <p className="text-xl neon-text-cyan animate-pulse">New Year 2026</p>
-        </div>
+      <>
+        <ThreeBackground />
+        {/* Hide 2D background with CSS */}
+        <style jsx global>{`
+          .layered-bg, .snow-effect { display: none !important; }
+        `}</style>
+        <main className="min-h-screen flex flex-col items-center justify-center p-4 relative z-10">
+          <div className="text-center mb-8">
+            <GlitchText
+              text="SECRET SANTA"
+              as="h1"
+              className="text-4xl md:text-6xl neon-text-pink mb-2"
+              glitchIntensity="medium"
+              continuous
+            />
+            <p className="text-xl neon-text-cyan animate-pulse">New Year 2026</p>
+          </div>
 
-        <PixelCard variant="highlight" className="max-w-md text-center">
-          <p className="text-neon-cyan mb-4">
-            Hey {gameView.currentPlayer.name}! Your Secret Santa assignment:
-          </p>
+          <PixelCard variant="highlight" className="max-w-md text-center">
+            <p className="text-neon-cyan mb-4">
+              Hey {gameView.currentPlayer.name}! Your Secret Santa assignment:
+            </p>
 
-          <div className="flex flex-col items-center gap-4 my-6">
-            <div className="bg-black/60 p-4 border-4 border-neon-pink neon-glow-pink animate-neon-pulse">
-              <PixelAvatar
-                avatarId={gameView.currentPlayer.assignedToAvatarId || "mystery"}
-                size="lg"
+            <div className="flex flex-col items-center gap-4 my-6">
+              <div className="bg-black/60 p-4 border-4 border-neon-pink neon-glow-pink animate-neon-pulse">
+                <PixelAvatar
+                  avatarId={gameView.currentPlayer.assignedToAvatarId || "mystery"}
+                  size="lg"
+                />
+              </div>
+              <GlitchText
+                text={gameView.currentPlayer.assignedToName}
+                as="h2"
+                className="text-4xl neon-text-yellow"
+                glitchIntensity="subtle"
+                continuous={false}
               />
             </div>
-            <GlitchText
-              text={gameView.currentPlayer.assignedToName}
-              as="h2"
-              className="text-4xl neon-text-yellow"
-              glitchIntensity="subtle"
-              continuous={false}
-            />
-          </div>
 
-          <p className="neon-text-green animate-pulse">
-            ★ Buy them a nice gift! ★
-          </p>
-
-          <div className="mt-6 text-sm text-gray-400">
-            <p>
-              {gameView.revealedCount}/{gameView.totalParticipants} players have revealed
+            <p className="neon-text-green animate-pulse">
+              ★ Buy them a nice gift! ★
             </p>
-          </div>
-        </PixelCard>
 
-        <button
-          onClick={handleLogout}
-          className="mt-4 text-sm text-gray-400 hover:text-neon-cyan transition-colors"
-        >
-          Logout
-        </button>
-      </main>
+            <div className="mt-6 text-sm text-gray-400">
+              <p>
+                {gameView.revealedCount}/{gameView.totalParticipants} players have revealed
+              </p>
+            </div>
+          </PixelCard>
+
+          <button
+            onClick={handleLogout}
+            className="mt-4 text-sm text-gray-400 hover:text-neon-cyan transition-colors"
+          >
+            Logout
+          </button>
+        </main>
+      </>
     );
   }
 
   // Active game - show avatar grid
   return (
-    <main className="min-h-screen p-4 md:p-8">
-      <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <GlitchText
-            text="SECRET SANTA"
-            as="h1"
-            className="text-4xl md:text-6xl neon-text-pink mb-2"
-            glitchIntensity="medium"
-            continuous
+    <>
+      <ThreeBackground />
+      {/* Hide 2D background with CSS */}
+      <style jsx global>{`
+        .layered-bg, .snow-effect { display: none !important; }
+      `}</style>
+      <main className="min-h-screen p-4 md:p-8 relative z-10">
+        <div className="max-w-5xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <GlitchText
+              text="SECRET SANTA"
+              as="h1"
+              className="text-4xl md:text-6xl neon-text-pink mb-2"
+              glitchIntensity="medium"
+              continuous
+            />
+            <p className="text-xl neon-text-cyan animate-pulse">New Year 2026</p>
+            <p className="text-lg text-white mt-4">
+              Welcome, <span className="neon-text-yellow">{gameView.currentPlayer?.name}</span>!
+            </p>
+          </div>
+
+          {/* Instructions */}
+          <PixelCard variant="dark" className="mb-8 text-center">
+            <p className="text-xl text-neon-cyan">
+              Click on any avatar (except yours) to reveal who you&apos;ll buy a gift for!
+            </p>
+            <p className="text-sm text-gray-400 mt-2">
+              Choose wisely - you can only reveal once! ★
+            </p>
+          </PixelCard>
+
+          {/* Avatar Grid */}
+          <AvatarGrid
+            participants={gameView.participants}
+            onAvatarClick={handleAvatarClick}
+            disabled={revealing}
           />
-          <p className="text-xl neon-text-cyan animate-pulse">New Year 2026</p>
-          <p className="text-lg text-white mt-4">
-            Welcome, <span className="neon-text-yellow">{gameView.currentPlayer?.name}</span>!
-          </p>
+
+          {/* Footer */}
+          <div className="mt-8 text-center">
+            <p className="text-sm text-gray-400 mb-2">
+              {gameView.revealedCount}/{gameView.totalParticipants} players have revealed
+            </p>
+            <button
+              onClick={handleLogout}
+              className="text-sm text-gray-400 hover:text-neon-cyan transition-colors"
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
-        {/* Instructions */}
-        <PixelCard variant="dark" className="mb-8 text-center">
-          <p className="text-xl text-neon-cyan">
-            Click on any avatar (except yours) to reveal who you&apos;ll buy a gift for!
-          </p>
-          <p className="text-sm text-gray-400 mt-2">
-            Choose wisely - you can only reveal once! ★
-          </p>
-        </PixelCard>
-
-        {/* Avatar Grid */}
-        <AvatarGrid
-          participants={gameView.participants}
-          onAvatarClick={handleAvatarClick}
-          disabled={revealing}
-        />
-
-        {/* Footer */}
-        <div className="mt-8 text-center">
-          <p className="text-sm text-gray-400 mb-2">
-            {gameView.revealedCount}/{gameView.totalParticipants} players have revealed
-          </p>
-          <button
-            onClick={handleLogout}
-            className="text-sm text-gray-400 hover:text-neon-cyan transition-colors"
-          >
-            Logout
-          </button>
-        </div>
-      </div>
-
-      {/* Reveal Modal */}
-      {revealData && (
-        <RevealModal
-          isOpen={showReveal}
-          assignedToName={revealData.name}
-          assignedToAvatarId={revealData.avatarId}
-          onClose={handleCloseReveal}
-          alreadyRevealed={revealData.alreadyRevealed}
-        />
-      )}
-    </main>
+        {/* Reveal Modal */}
+        {revealData && (
+          <RevealModal
+            isOpen={showReveal}
+            assignedToName={revealData.name}
+            assignedToAvatarId={revealData.avatarId}
+            onClose={handleCloseReveal}
+            alreadyRevealed={revealData.alreadyRevealed}
+          />
+        )}
+      </main>
+    </>
   );
 }
