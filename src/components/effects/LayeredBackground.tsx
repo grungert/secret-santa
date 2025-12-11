@@ -29,27 +29,18 @@ export default function LayeredBackground() {
         style={{ backgroundImage: "url(/imgs/background.png)" }}
       />
 
-      {/* Layer 2: Neon horizon glow line */}
-      <div
-        className="absolute left-0 right-0 h-[2px] top-[42%]"
-        style={{
-          background: "linear-gradient(90deg, transparent, #ff00ff, #ff6600, #ff00ff, transparent)",
-          boxShadow: "0 0 20px 4px rgba(255, 0, 255, 0.6), 0 0 40px 8px rgba(255, 102, 0, 0.4)",
-        }}
-      />
-
-      {/* Layer 3: Island with house - floating animation */}
+      {/* Layer 2: Island with house - floating animation */}
       <img
         src="/imgs/island.png"
         alt=""
-        className="absolute bottom-[2%] left-1/2 w-[55vw] max-w-[700px] animate-bg-float"
+        className="absolute bottom-[5%] left-1/2 w-[32vw] max-w-[400px] animate-bg-float"
         style={{
           transform: "translateX(-50%)",
           imageRendering: "pixelated",
         }}
       />
 
-      {/* Layer 4: Santa flying across - looping animation */}
+      {/* Layer 3: Santa flying across - looping animation */}
       <img
         ref={santaRef}
         src="/imgs/santa.png"

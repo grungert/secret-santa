@@ -7,11 +7,13 @@ import RevealModal from "@/components/game/RevealModal";
 import PixelCard from "@/components/ui/PixelCard";
 import PixelAvatar from "@/components/game/PixelAvatar";
 import GlitchText from "@/components/effects/GlitchText";
+import PixelButton from "@/components/ui/PixelButton";
 import { PlayerGameView } from "@/types";
 
 const STORAGE_KEY = "secret-santa-player";
 
 export default function PlayerPage() {
+  const [showStartScreen, setShowStartScreen] = useState(true);
   const [playerName, setPlayerName] = useState<string | null>(null);
   const [gameView, setGameView] = useState<PlayerGameView | null>(null);
   const [loading, setLoading] = useState(true);
@@ -142,6 +144,45 @@ export default function PlayerPage() {
   const handleCloseReveal = () => {
     setShowReveal(false);
   };
+
+  const handleStart = () => {
+    setShowStartScreen(false);
+  };
+
+  // Start screen - shows full background with START button
+  if (showStartScreen) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-start pt-[15vh] p-4 relative">
+        {/* Admin link in bottom right */}
+        <a
+          href="/admin"
+          className="absolute bottom-4 right-4 text-sm text-gray-500 hover:text-neon-cyan transition-colors"
+        >
+          Admin Panel →
+        </a>
+
+        <div className="text-center">
+          <GlitchText
+            text="SECRET SANTA"
+            as="h1"
+            className="text-5xl md:text-7xl neon-text-pink mb-4"
+            glitchIntensity="medium"
+            continuous
+          />
+          <p className="text-2xl neon-text-cyan animate-pulse mb-12">New Year 2026</p>
+
+          <PixelButton
+            onClick={handleStart}
+            variant="neonPink"
+            size="lg"
+            className="text-2xl px-12 py-4 animate-neon-pulse"
+          >
+            ▶ START
+          </PixelButton>
+        </div>
+      </main>
+    );
+  }
 
   // Loading state
   if (loading) {

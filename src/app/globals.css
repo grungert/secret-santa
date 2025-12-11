@@ -541,10 +541,10 @@ body {
 /* Santa flies across the screen */
 @keyframes santa-fly {
   0% {
-    left: -30vw;
+    transform: translateX(-100%);
   }
   100% {
-    left: 130vw;
+    transform: translateX(calc(100vw + 100%));
   }
 }
 
@@ -553,6 +553,7 @@ body {
 }
 
 .animate-santa-fly {
+  left: 0;
   animation: santa-fly 18s linear infinite;
 }
 
