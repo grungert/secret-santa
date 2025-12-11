@@ -1,65 +1,323 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+import { useState, useEffect, useCallback } from "react";
+import LoginForm from "@/components/game/LoginForm";
+import AvatarGrid from "@/components/game/AvatarGrid";
+import RevealModal from "@/components/game/RevealModal";
+import PixelCard from "@/components/ui/PixelCard";
+import PixelAvatar from "@/components/game/PixelAvatar";
+import { PlayerGameView } from "@/types";
+
+const STORAGE_KEY = "secret-santa-player";
+
+export default function PlayerPage() {
+  const [playerName, setPlayerName] = useState<string | null>(null);
+  const [gameView, setGameView] = useState<PlayerGameView | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [loginError, setLoginError] = useState("");
+
+  // Reveal modal state
+  const [showReveal, setShowReveal] = useState(false);
+  const [revealData, setRevealData] = useState<{
+    name: string;
+    avatarId: string;
+    alreadyRevealed: boolean;
+  } | null>(null);
+  const [revealing, setRevealing] = useState(false);
+
+  // Load saved player name from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const { name } = JSON.parse(saved);
+        setPlayerName(name);
+      } catch {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+    setLoading(false);
+  }, []);
+
+  // Fetch game view for player
+  const fetchGameView = useCallback(async () => {
+    if (!playerName) return;
+
+    try {
+      const res = await fetch(`/api/game?player=${encodeURIComponent(playerName)}`);
+      const data = await res.json();
+
+      if (data.success) {
+        const view = data.data as PlayerGameView;
+
+        // Check if player exists in game
+        if (!view.currentPlayer) {
+          setLoginError("Name not found in game. Check with the admin!");
+          setPlayerName(null);
+          localStorage.removeItem(STORAGE_KEY);
+          return;
+        }
+
+        setGameView(view);
+        setLoginError("");
+      }
+    } catch {
+      console.error("Failed to fetch game view");
+    }
+  }, [playerName]);
+
+  useEffect(() => {
+    if (playerName) {
+      fetchGameView();
+      // Poll for updates every 3 seconds
+      const interval = setInterval(fetchGameView, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [playerName, fetchGameView]);
+
+  const handleLogin = async (name: string) => {
+    setLoading(true);
+    setLoginError("");
+
+    try {
+      // Check if player exists
+      const res = await fetch(`/api/game?player=${encodeURIComponent(name)}`);
+      const data = await res.json();
+
+      if (data.success && data.data.currentPlayer) {
+        // Save to localStorage
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ name }));
+        setPlayerName(name);
+        setGameView(data.data);
+      } else {
+        setLoginError("Name not found. Make sure you use the exact name the admin registered!");
+      }
+    } catch {
+      setLoginError("Failed to connect. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setPlayerName(null);
+    setGameView(null);
+  };
+
+  const handleAvatarClick = async () => {
+    if (!playerName || revealing) return;
+
+    setRevealing(true);
+
+    try {
+      const res = await fetch("/api/reveal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ playerName }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setRevealData({
+          name: data.data.assignedTo.name,
+          avatarId: data.data.assignedTo.avatarId,
+          alreadyRevealed: data.data.alreadyRevealed,
+        });
+        setShowReveal(true);
+        // Refresh game view
+        fetchGameView();
+      } else {
+        alert(data.error || "Failed to reveal");
+      }
+    } catch {
+      alert("Failed to connect. Please try again.");
+    } finally {
+      setRevealing(false);
+    }
+  };
+
+  const handleCloseReveal = () => {
+    setShowReveal(false);
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl animate-pixel-bounce mb-4">🎅</div>
+          <p className="text-2xl text-gold">Loading...</p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+      </div>
+    );
+  }
+
+  // Login screen
+  if (!playerName) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl md:text-6xl text-gold mb-2">
+            🎄 Secret Santa 🎄
+          </h1>
+          <p className="text-xl text-frost-blue">New Year 2026</p>
+        </div>
+
+        <LoginForm onLogin={handleLogin} error={loginError} loading={loading} />
+
+        <div className="mt-8">
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/admin"
+            className="text-sm text-gray-400 hover:text-frost-blue transition-colors"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
+            Admin Panel →
           </a>
         </div>
       </main>
-    </div>
+    );
+  }
+
+  // Game not started
+  if (!gameView || gameView.status === "setup") {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl md:text-6xl text-gold mb-2">
+            🎄 Secret Santa 🎄
+          </h1>
+          <p className="text-xl text-frost-blue">New Year 2026</p>
+        </div>
+
+        <PixelCard variant="highlight" className="max-w-md text-center">
+          <div className="text-4xl animate-pixel-float mb-4">⏳</div>
+          <h2 className="text-2xl text-gold mb-2">
+            Welcome, {gameView?.currentPlayer?.name || playerName}!
+          </h2>
+          <p className="text-frost-blue mb-4">
+            The game hasn&apos;t started yet. Wait for the admin to set everything up!
+          </p>
+          <p className="text-sm text-gray-400">
+            This page will automatically update when the game starts.
+          </p>
+        </PixelCard>
+
+        <button
+          onClick={handleLogout}
+          className="mt-4 text-sm text-gray-400 hover:text-frost-blue transition-colors"
+        >
+          Logout
+        </button>
+      </main>
+    );
+  }
+
+  // Player already revealed - show their assignment
+  if (gameView.currentPlayer?.hasRevealed && gameView.currentPlayer.assignedToName) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl md:text-6xl text-gold mb-2">
+            🎄 Secret Santa 🎄
+          </h1>
+          <p className="text-xl text-frost-blue">New Year 2026</p>
+        </div>
+
+        <PixelCard variant="highlight" className="max-w-md text-center">
+          <p className="text-frost-blue mb-4">
+            Hey {gameView.currentPlayer.name}! Your Secret Santa assignment:
+          </p>
+
+          <div className="flex flex-col items-center gap-4 my-6">
+            <div className="bg-midnight p-4 border-4 border-gold pixel-shadow animate-pulse-glow">
+              <PixelAvatar
+                avatarId={gameView.currentPlayer.assignedToAvatarId || "mystery"}
+                size="lg"
+              />
+            </div>
+            <h2 className="text-4xl text-gold">
+              {gameView.currentPlayer.assignedToName}
+            </h2>
+          </div>
+
+          <p className="text-frost-blue">
+            🎁 Buy them a nice gift! 🎁
+          </p>
+
+          <div className="mt-6 text-sm text-gray-400">
+            <p>
+              {gameView.revealedCount}/{gameView.totalParticipants} players have revealed
+            </p>
+          </div>
+        </PixelCard>
+
+        <button
+          onClick={handleLogout}
+          className="mt-4 text-sm text-gray-400 hover:text-frost-blue transition-colors"
+        >
+          Logout
+        </button>
+      </main>
+    );
+  }
+
+  // Active game - show avatar grid
+  return (
+    <main className="min-h-screen p-4 md:p-8">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl md:text-6xl text-gold mb-2">
+            🎄 Secret Santa 🎄
+          </h1>
+          <p className="text-xl text-frost-blue">New Year 2026</p>
+          <p className="text-lg text-snow-white mt-4">
+            Welcome, <span className="text-gold">{gameView.currentPlayer?.name}</span>!
+          </p>
+        </div>
+
+        {/* Instructions */}
+        <PixelCard variant="dark" className="mb-8 text-center">
+          <p className="text-xl text-frost-blue">
+            Click on any avatar (except yours) to reveal who you&apos;ll buy a gift for!
+          </p>
+          <p className="text-sm text-gray-400 mt-2">
+            Choose wisely - you can only reveal once! 🎁
+          </p>
+        </PixelCard>
+
+        {/* Avatar Grid */}
+        <AvatarGrid
+          participants={gameView.participants}
+          onAvatarClick={handleAvatarClick}
+          disabled={revealing}
+        />
+
+        {/* Footer */}
+        <div className="mt-8 text-center">
+          <p className="text-sm text-gray-400 mb-2">
+            {gameView.revealedCount}/{gameView.totalParticipants} players have revealed
+          </p>
+          <button
+            onClick={handleLogout}
+            className="text-sm text-gray-400 hover:text-frost-blue transition-colors"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+
+      {/* Reveal Modal */}
+      {revealData && (
+        <RevealModal
+          isOpen={showReveal}
+          assignedToName={revealData.name}
+          assignedToAvatarId={revealData.avatarId}
+          onClose={handleCloseReveal}
+          alreadyRevealed={revealData.alreadyRevealed}
+        />
+      )}
+    </main>
   );
 }

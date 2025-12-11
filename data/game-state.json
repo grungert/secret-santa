@@ -1,0 +1,38 @@
+{
+  "id": "db05e472-34ff-48ed-88f1-7081250f370d",
+  "status": "active",
+  "participants": [
+    {
+      "id": "bed097d0-b443-4497-8f99-590b3188555f",
+      "name": "Bojan",
+      "normalizedName": "bojan",
+      "avatarId": "reindeer-dasher",
+      "assignedToId": "b657c138-e7eb-4ad7-a862-c60fd52651ce",
+      "hasRevealed": true,
+      "revealedAt": "2025-12-11T10:27:01.360Z",
+      "createdAt": "2025-12-11T10:26:34.005Z"
+    },
+    {
+      "id": "b657c138-e7eb-4ad7-a862-c60fd52651ce",
+      "name": "Kaca",
+      "normalizedName": "kaca",
+      "avatarId": "present-red",
+      "assignedToId": "358742b3-d5ad-4f86-ae33-31b08a7cec32",
+      "hasRevealed": false,
+      "revealedAt": null,
+      "createdAt": "2025-12-11T10:26:38.361Z"
+    },
+    {
+      "id": "358742b3-d5ad-4f86-ae33-31b08a7cec32",
+      "name": "Sceka",
+      "normalizedName": "sceka",
+      "avatarId": "penguin-santa",
+      "assignedToId": "bed097d0-b443-4497-8f99-590b3188555f",
+      "hasRevealed": false,
+      "revealedAt": null,
+      "createdAt": "2025-12-11T10:26:42.428Z"
+    }
+  ],
+  "createdAt": "2025-12-11T10:26:22.380Z",
+  "startedAt": "2025-12-11T10:26:43.938Z"
+}
