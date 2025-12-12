@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import LoginForm from "@/components/game/LoginForm";
 import AvatarGrid from "@/components/game/AvatarGrid";
 import RevealModal from "@/components/game/RevealModal";
+import GameSidebar from "@/components/game/GameSidebar";
 import PixelCard from "@/components/ui/PixelCard";
 import PixelAvatar from "@/components/game/PixelAvatar";
 import GlitchText from "@/components/effects/GlitchText";
@@ -176,13 +177,15 @@ export default function PlayerPage() {
             glitchIntensity="medium"
             continuous
           />
-          <p className="text-2xl neon-text-cyan animate-pulse mb-12">New Year 2026</p>
+          <p className="text-2xl mb-12 animate-rainbow-neon tracking-widest">
+            ✦ New Year 2026 ✦
+          </p>
 
           <PixelButton
             onClick={handleStart}
             variant="retro"
             size="lg"
-            className="text-2xl px-16 py-5 rounded-lg"
+            className="text-3xl px-14 py-4"
           >
             ▶ START
           </PixelButton>
@@ -341,7 +344,7 @@ export default function PlayerPage() {
     );
   }
 
-  // Active game - show avatar grid
+  // Active game - show avatar grid with sidebar
   return (
     <>
       <ThreeBackground />
@@ -349,51 +352,40 @@ export default function PlayerPage() {
       <style jsx global>{`
         .layered-bg, .snow-effect { display: none !important; }
       `}</style>
-      <main className="min-h-screen p-4 md:p-8 relative z-10">
-        <div className="max-w-5xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <GlitchText
-              text="SECRET SANTA"
-              as="h1"
-              className="text-4xl md:text-6xl neon-text-pink mb-2"
-              glitchIntensity="medium"
-              continuous
-            />
-            <p className="text-xl neon-text-cyan animate-pulse">New Year 2026</p>
-            <p className="text-lg text-white mt-4">
-              Welcome, <span className="neon-text-yellow">{gameView.currentPlayer?.name}</span>!
-            </p>
-          </div>
-
-          {/* Instructions */}
-          <PixelCard variant="dark" className="mb-8 text-center">
-            <p className="text-xl text-neon-cyan">
-              Click on any avatar (except yours) to reveal who you&apos;ll buy a gift for!
-            </p>
-            <p className="text-sm text-gray-400 mt-2">
-              Choose wisely - you can only reveal once! ★
-            </p>
-          </PixelCard>
-
-          {/* Avatar Grid */}
-          <AvatarGrid
-            participants={gameView.participants}
-            onAvatarClick={handleAvatarClick}
-            disabled={revealing}
+      <main className="min-h-screen p-4 md:p-6 lg:p-8 relative z-10">
+        {/* Header - Full Width */}
+        <div className="text-center mb-6 md:mb-8">
+          <GlitchText
+            text="SECRET SANTA"
+            as="h1"
+            className="text-3xl md:text-5xl lg:text-6xl neon-text-pink mb-2"
+            glitchIntensity="medium"
+            continuous
           />
+          <p className="text-lg md:text-xl neon-text-cyan animate-pulse">New Year 2026</p>
+        </div>
 
-          {/* Footer */}
-          <div className="mt-8 text-center">
-            <p className="text-sm text-gray-400 mb-2">
-              {gameView.revealedCount}/{gameView.totalParticipants} players have revealed
-            </p>
-            <button
-              onClick={handleLogout}
-              className="text-sm text-gray-400 hover:text-neon-cyan transition-colors"
-            >
-              Logout
-            </button>
+        {/* Main Content - Sidebar + Grid Layout */}
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row gap-6 lg:gap-8">
+            {/* Left Sidebar */}
+            <GameSidebar
+              playerName={gameView.currentPlayer?.name || playerName}
+              playerAvatarId={gameView.currentPlayer?.avatarId || "mystery"}
+              revealedCount={gameView.revealedCount}
+              totalParticipants={gameView.totalParticipants}
+              hasRevealed={gameView.currentPlayer?.hasRevealed || false}
+              onLogout={handleLogout}
+            />
+
+            {/* Right - Avatar Grid */}
+            <div className="flex-1">
+              <AvatarGrid
+                participants={gameView.participants}
+                onAvatarClick={handleAvatarClick}
+                disabled={revealing}
+              />
+            </div>
           </div>
         </div>
 

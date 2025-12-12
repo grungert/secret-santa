@@ -4,7 +4,7 @@ import { HTMLAttributes, forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface PixelCardProps extends HTMLAttributes<HTMLDivElement> {
-  variant?: "default" | "highlight" | "dark" | "neonPink" | "neonCyan";
+  variant?: "default" | "highlight" | "dark" | "neonPink" | "neonCyan" | "neonGreen";
   hover?: boolean;
   glow?: boolean;
 }
@@ -17,6 +17,7 @@ const PixelCard = forwardRef<HTMLDivElement, PixelCardProps>(
       dark: "bg-black/80 border-neon-purple/50 backdrop-blur-sm",
       neonPink: "bg-black/60 border-neon-pink backdrop-blur-sm",
       neonCyan: "bg-black/60 border-neon-cyan backdrop-blur-sm",
+      neonGreen: "bg-black/60 border-neon-green backdrop-blur-sm",
     };
 
     return (

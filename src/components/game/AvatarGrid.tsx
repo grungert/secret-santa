@@ -16,12 +16,15 @@ export default function AvatarGrid({
   disabled = false,
   selectedAvatarId,
 }: AvatarGridProps) {
-  if (participants.length === 0) {
+  // Filter out the current player - they're shown in the sidebar
+  const otherParticipants = participants.filter(p => !p.isCurrentPlayer);
+
+  if (otherParticipants.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-2xl text-frost-blue">No participants yet...</p>
+        <p className="text-2xl text-frost-blue">No other participants yet...</p>
         <p className="text-lg text-gray-400 mt-2">
-          Wait for the admin to start the game!
+          Wait for more players to join!
         </p>
       </div>
     );
@@ -29,14 +32,14 @@ export default function AvatarGrid({
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-      {participants.map((participant, index) => (
+      {otherParticipants.map((participant, index) => (
         <AvatarCard
           key={`${participant.avatarId}-${index}`}
           avatarId={participant.avatarId}
-          isCurrentPlayer={participant.isCurrentPlayer}
+          isCurrentPlayer={false}
           hasRevealed={participant.hasRevealed}
           onClick={() => onAvatarClick?.(participant.avatarId)}
-          disabled={disabled || participant.isCurrentPlayer}
+          disabled={disabled}
           selected={selectedAvatarId === participant.avatarId}
         />
       ))}

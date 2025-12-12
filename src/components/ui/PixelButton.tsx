@@ -34,7 +34,7 @@ const PixelButton = forwardRef<HTMLButtonElement, PixelButtonProps>(
       neonYellow:
         "bg-black/40 border-neon-yellow text-neon-yellow neon-glow-yellow hover:bg-neon-yellow/20 hover:animate-neon-tube",
       retro:
-        "bg-[#2d1b4e] border-[#8b5cf6] text-white shadow-[inset_0_-4px_0_0_#1a0f2e,inset_0_4px_0_0_#4c1d95,0_0_20px_#8b5cf680,0_0_40px_#8b5cf640] hover:bg-[#3d2b5e] hover:shadow-[inset_0_-4px_0_0_#1a0f2e,inset_0_4px_0_0_#4c1d95,0_0_30px_#8b5cf6,0_0_60px_#8b5cf680] hover:scale-105 active:shadow-[inset_0_4px_0_0_#1a0f2e,0_0_20px_#8b5cf680]",
+        "bg-[#4a1942] text-[#ffd700] border-[6px] border-t-[#ff69b4] border-l-[#ff69b4] border-b-[#2a0a2a] border-r-[#2a0a2a] shadow-[4px_4px_0_0_#000,inset_2px_2px_0_0_#ff99cc,0_0_20px_#ff69b4,0_0_40px_#ff69b480,0_0_60px_#ff69b440] cursor-pointer hover:cursor-pointer hover:bg-[#5a2952] hover:border-t-[#ff99cc] hover:border-l-[#ff99cc] hover:shadow-[4px_4px_0_0_#000,inset_2px_2px_0_0_#ff99cc,0_0_30px_#ff69b4,0_0_60px_#ff69b4,0_0_80px_#ff69b480] active:border-t-[#2a0a2a] active:border-l-[#2a0a2a] active:border-b-[#ff69b4] active:border-r-[#ff69b4] active:shadow-[2px_2px_0_0_#000,0_0_40px_#ffd700] active:translate-x-[2px] active:translate-y-[2px] animate-retro-glow",
     };
 
     const sizes = {

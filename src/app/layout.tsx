@@ -3,6 +3,7 @@ import { VT323 } from "next/font/google";
 import "./globals.css";
 import LayeredBackground from "@/components/effects/LayeredBackground";
 import SnowEffect from "@/components/effects/SnowEffect";
+import FireworksEffect from "@/components/effects/FireworksEffect";
 import ScanlineOverlay from "@/components/effects/ScanlineOverlay";
 
 const pixelFont = VT323({
@@ -29,6 +30,9 @@ export default function RootLayout({
 
         {/* Falling snow */}
         <SnowEffect density={60} />
+
+        {/* Fireworks from island */}
+        <FireworksEffect />
 
         {/* Main content */}
         <div className="relative z-10">{children}</div>
