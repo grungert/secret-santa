@@ -1,0 +1,455 @@
+/* Santa Face Expressions CSS */
+/* Ported from examples/santa/santa.css - converted to class-based */
+
+.santa-container {
+  --red: #a71324;
+  --white: #FEFEFC;
+  --black: #010103;
+  --beige: #EF9967;
+  --size: 70px;
+  --bs-col: 0, 0, 0;
+  --box-shadow-outer: 0 4px 4px -2px rgba(var(--bs-col), 0.15);
+  --box-shadow-inner: inset 0 -4px 4px -2px rgba(var(--bs-col), 0.15);
+  --box-shadow-inner-dark: inset -4px -8px 6px -2px rgba(var(--bs-col), 0.2);
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-top: 50px;
+  padding-bottom: 5px;
+}
+
+.santa {
+  width: calc(var(--size) / 1.25);
+  height: calc(var(--size) / 1);
+  border-radius: 20px 20px 100% 100%;
+  background-color: var(--beige);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  box-shadow: var(--box-shadow-outer), var(--box-shadow-inner-dark);
+  transform: translateZ(0);
+  transition: transform 0.3s ease-out;
+}
+
+/* Hat */
+.santa .hat {
+  position: absolute;
+  bottom: 66%;
+  display: flex;
+  justify-content: center;
+  transition: transform 0.3s ease-out;
+}
+
+.santa .front {
+  width: calc(var(--size) / 1.25);
+  height: calc(var(--size) / 1.5);
+  border-radius: 40px 2px 0 0;
+  background-color: var(--red);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  z-index: 2;
+  box-shadow: var(--box-shadow-outer), var(--box-shadow-inner);
+}
+
+.santa .front:before {
+  width: calc(var(--size) / 1);
+  height: calc(var(--size) / 4);
+  border-radius: 4px;
+  background-color: var(--white);
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: 0;
+  box-shadow: var(--box-shadow-outer), var(--box-shadow-inner-dark);
+}
+
+.santa .tail {
+  width: calc(var(--size) / 6);
+  height: calc(var(--size) / 3.5);
+  border-radius: 0 10px 1px 0;
+  background-color: var(--red);
+  position: absolute;
+  top: 0;
+  left: 95%;
+  display: flex;
+  justify-content: center;
+  box-shadow: var(--box-shadow-outer), var(--box-shadow-inner-dark);
+}
+
+.santa .tail:before {
+  width: calc(var(--size) / 3);
+  height: calc(var(--size) / 3);
+  border-radius: 100%;
+  background-color: var(--white);
+  content: "";
+  display: block;
+  position: absolute;
+  top: 94%;
+  z-index: -1;
+  box-shadow: var(--box-shadow-outer), var(--box-shadow-inner-dark);
+}
+
+/* Eyes */
+.santa .eye {
+  width: calc(var(--size) / 20);
+  height: calc(var(--size) / 20);
+  border-radius: 100%;
+  background-color: var(--black);
+  position: absolute;
+  top: 40%;
+  display: flex;
+  justify-content: center;
+  z-index: 3;
+  animation: blink 4s ease-out infinite;
+  transition: transform 0.3s ease-out, background-color 0.2s;
+}
+
+.santa .eye.left {
+  left: 30%;
+}
+
+.santa .eye.right {
+  right: 30%;
+}
+
+@keyframes blink {
+  2.5% { transform: scaleY(0.1); }
+  5%, 100% { transform: scaleY(1); }
+}
+
+/* Brows */
+.santa .brow {
+  position: absolute;
+  top: 31%;
+  box-shadow: var(--box-shadow-outer), var(--box-shadow-inner);
+  z-index: 4;
+  animation: dip 4s ease-out infinite;
+  transition: transform 0.3s ease-out;
+}
+
+.santa .brow.left {
+  width: calc(var(--size) / 5);
+  height: calc(var(--size) / 10);
+  border-radius: 40px 40px 40px 0;
+  background-color: var(--white);
+  left: 20%;
+}
+
+.santa .brow.right {
+  width: calc(var(--size) / 5);
+  height: calc(var(--size) / 10);
+  border-radius: 40px 40px 0 40px;
+  background-color: var(--white);
+  right: 20%;
+}
+
+@keyframes dip {
+  2.5% { transform: translateY(1px); }
+  5%, 100% { transform: translateY(0); }
+}
+
+/* Nose */
+.santa .nose {
+  width: calc(var(--size) / 5);
+  height: calc(var(--size) / 5);
+  border-radius: 100%;
+  background-color: var(--beige);
+  position: absolute;
+  top: 40%;
+  z-index: 4;
+  box-shadow: var(--box-shadow-outer), var(--box-shadow-inner);
+  transition: transform 0.3s ease-out;
+}
+
+/* Mustache */
+.santa .mustache {
+  position: absolute;
+  top: 50%;
+  flex: 1 0 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 3;
+}
+
+.santa .mustache:before,
+.santa .mustache:after {
+  content: "";
+  display: block;
+  transform: rotate(0.001deg);
+  box-shadow: var(--box-shadow-outer), var(--box-shadow-inner);
+  transition: transform 0.3s ease-out;
+}
+
+.santa .mustache:before {
+  width: calc(var(--size) / 2);
+  height: calc(var(--size) / 5);
+  border-radius: 40px 0 40px 0;
+  background-color: var(--white);
+  margin-right: -4px;
+}
+
+.santa .mustache:after {
+  width: calc(var(--size) / 2);
+  height: calc(var(--size) / 5);
+  border-radius: 0 40px 0 40px;
+  background-color: var(--white);
+}
+
+/* Mouth */
+.santa .mouth {
+  width: calc(var(--size) / 5);
+  height: calc(var(--size) / 5);
+  border-radius: 100%;
+  background-color: var(--black);
+  position: absolute;
+  bottom: 25%;
+  z-index: 2;
+  transform-origin: 50% 0;
+  transform: scaleY(0.1);
+  transition: transform 0.3s ease-out;
+}
+
+/* Beard */
+.santa .beard {
+  width: calc(var(--size) / 1.25);
+  height: calc(var(--size) / 1.5);
+  border-radius: 0 0 40px 40px;
+  background-color: var(--white);
+  position: absolute;
+  top: 55%;
+  box-shadow: var(--box-shadow-outer), var(--box-shadow-inner-dark);
+}
+
+/* Ears */
+.santa .ear {
+  position: absolute;
+  top: 35%;
+  display: flex;
+  justify-content: center;
+  z-index: -1;
+  box-shadow: var(--box-shadow-outer), var(--box-shadow-inner);
+}
+
+.santa .ear.left {
+  width: calc(var(--size) / 20);
+  height: calc(var(--size) / 6);
+  border-radius: 20px 0 0 20px;
+  background-color: var(--beige);
+  right: 100%;
+}
+
+.santa .ear.right {
+  width: calc(var(--size) / 20);
+  height: calc(var(--size) / 6);
+  border-radius: 0 20px 20px 0;
+  background-color: var(--beige);
+  left: 100%;
+}
+
+/* ============================================ */
+/* NAUGHTY Expression (Default/Skeptical)      */
+/* ============================================ */
+.santa.naughty {
+  animation: naughty-head-raise 300ms ease-out forwards;
+}
+
+.santa.naughty .eye {
+  animation: blink 4s ease-out infinite, naughty-eye-raise 400ms ease-out forwards;
+}
+
+.santa.naughty .brow.left {
+  animation: naughty-brow-left 400ms linear forwards;
+}
+
+.santa.naughty .brow.right {
+  animation: naughty-brow-right 400ms linear forwards;
+}
+
+.santa.naughty .mustache:before {
+  animation: naughty-stache-left 600ms ease-out forwards;
+}
+
+.santa.naughty .mustache:after {
+  animation: naughty-stache-right 600ms ease-out forwards;
+}
+
+@keyframes naughty-head-raise {
+  50%, 100% { transform: translateY(2%); }
+}
+
+@keyframes naughty-eye-raise {
+  50%, 100% { transform: translateY(-25%); }
+}
+
+@keyframes naughty-stache-left {
+  50%, 100% { transform: rotate(5deg); }
+}
+
+@keyframes naughty-stache-right {
+  50%, 100% { transform: rotate(-5deg); }
+}
+
+@keyframes naughty-brow-left {
+  25% { transform: translateY(10%); }
+  50% { transform: translateY(0) rotate(2deg); }
+  70%, 100% { transform: translateY(-5%) rotate(5deg); }
+}
+
+@keyframes naughty-brow-right {
+  25% { transform: translateY(5%); }
+  50% { transform: translateY(0) rotate(-5deg); }
+  70%, 100% { transform: translateY(-25%) rotate(-5deg); }
+}
+
+/* ============================================ */
+/* NICE Expression (Happy/Pleasant)            */
+/* ============================================ */
+.santa.nice {
+  animation: nice-head-raise 300ms ease-out forwards;
+}
+
+.santa.nice .mouth {
+  animation: nice-mouth 400ms ease-out forwards;
+}
+
+.santa.nice .eye {
+  animation: nice-eye-raise 400ms ease-out forwards;
+}
+
+.santa.nice .brow.left {
+  animation: nice-brow-left 400ms ease-out forwards;
+}
+
+.santa.nice .brow.right {
+  animation: nice-brow-right 400ms ease-out forwards;
+}
+
+.santa.nice .mustache:before {
+  animation: nice-stache-left 400ms ease-out forwards;
+}
+
+.santa.nice .mustache:after {
+  animation: nice-stache-right 400ms ease-out forwards;
+}
+
+@keyframes nice-head-raise {
+  50%, 100% { transform: translateY(-2%); }
+}
+
+@keyframes nice-eye-raise {
+  50%, 100% { transform: translateY(-25%); }
+}
+
+@keyframes nice-mouth {
+  50%, 100% { transform: scaleY(0.75); }
+}
+
+@keyframes nice-stache-left {
+  50%, 100% { transform: rotate(-5deg); }
+}
+
+@keyframes nice-stache-right {
+  50%, 100% { transform: rotate(5deg); }
+}
+
+@keyframes nice-brow-left {
+  50%, 100% { transform: translateY(-25%) rotate(-10deg); }
+}
+
+@keyframes nice-brow-right {
+  50%, 100% { transform: translateY(-25%) rotate(10deg); }
+}
+
+/* ============================================ */
+/* SUPER NICE Expression (Excited/Heart Eyes)  */
+/* ============================================ */
+.santa.super-nice {
+  animation: super-head-raise 600ms ease-out forwards;
+}
+
+.santa.super-nice .mouth {
+  animation: super-mouth 400ms ease-out forwards;
+}
+
+.santa.super-nice .eye {
+  background-color: transparent;
+  animation: none;
+  z-index: 5;
+}
+
+.santa.super-nice .eye:before {
+  content: "\2764\FE0F"; /* Heart emoji */
+  font-size: 10px;
+  position: absolute;
+  top: -2px;
+  animation: super-eyes 400ms ease-out forwards;
+}
+
+.santa.super-nice .hat {
+  animation: super-hat 1s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+}
+
+.santa.super-nice .nose {
+  animation: super-nose 400ms linear forwards;
+}
+
+.santa.super-nice .brow.left {
+  animation: super-brow-left 400ms ease-out forwards;
+}
+
+.santa.super-nice .brow.right {
+  animation: super-brow-right 400ms ease-out forwards;
+}
+
+.santa.super-nice .mustache:before {
+  animation: super-stache-left 400ms ease-out forwards;
+}
+
+.santa.super-nice .mustache:after {
+  animation: super-stache-right 400ms ease-out forwards;
+}
+
+@keyframes super-head-raise {
+  15% { transform: translateY(-10%); }
+  75% { transform: translateY(0); }
+}
+
+@keyframes super-eyes {
+  50%, 70% { transform: scale(2) translateY(-25%); }
+}
+
+@keyframes super-hat {
+  20% { transform: translateY(-15%); }
+  60% { transform: translateY(0); }
+}
+
+@keyframes super-nose {
+  25% { transform: translateY(-5%); }
+  75% { transform: translateY(0); }
+}
+
+@keyframes super-mouth {
+  50%, 100% { transform: scaleY(1); }
+}
+
+@keyframes super-stache-left {
+  50% { transform: translateY(-2%) rotate(-15deg); }
+  75%, 100% { transform: rotate(-5deg); }
+}
+
+@keyframes super-stache-right {
+  50% { transform: translateY(-2%) rotate(15deg); }
+  75%, 100% { transform: rotate(5deg); }
+}
+
+@keyframes super-brow-left {
+  50% { transform: translateY(-100%) rotate(-15deg); }
+  100% { transform: translateY(-20%) rotate(-5deg); }
+}
+
+@keyframes super-brow-right {
+  50% { transform: translateY(-100%) rotate(5deg); }
+  100% { transform: translateY(-20%) rotate(5deg); }
+}

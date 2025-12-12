@@ -11,6 +11,7 @@ import PixelAvatar from "@/components/game/PixelAvatar";
 import GlitchText from "@/components/effects/GlitchText";
 import PixelButton from "@/components/ui/PixelButton";
 import { PlayerGameView } from "@/types";
+import SantaFace, { SantaExpression } from "@/components/game/SantaFace";
 
 // Dynamically import ThreeBackground to avoid SSR issues with Three.js
 const ThreeBackground = dynamic(
@@ -35,6 +36,9 @@ export default function PlayerPage() {
     alreadyRevealed: boolean;
   } | null>(null);
   const [revealing, setRevealing] = useState(false);
+
+  // Santa expression state
+  const [santaExpression, setSantaExpression] = useState<SantaExpression>("naughty");
 
   // Load saved player name from localStorage
   useEffect(() => {
@@ -120,6 +124,8 @@ export default function PlayerPage() {
     if (!playerName || revealing) return;
 
     setRevealing(true);
+    // Set Santa to "Super Nice" expression immediately
+    setSantaExpression("super-nice");
 
     try {
       const res = await fetch("/api/reveal", {
@@ -136,13 +142,19 @@ export default function PlayerPage() {
           avatarId: data.data.assignedTo.avatarId,
           alreadyRevealed: data.data.alreadyRevealed,
         });
-        setShowReveal(true);
-        // Refresh game view
-        fetchGameView();
+
+        // Delay showing the reveal modal to let Santa's "Super Nice" animation play
+        setTimeout(() => {
+          setShowReveal(true);
+          // Refresh game view
+          fetchGameView();
+        }, 1500);
       } else {
+        setSantaExpression("naughty");
         alert(data.error || "Failed to reveal");
       }
     } catch {
+      setSantaExpression("naughty");
       alert("Failed to connect. Please try again.");
     } finally {
       setRevealing(false);
@@ -151,6 +163,20 @@ export default function PlayerPage() {
 
   const handleCloseReveal = () => {
     setShowReveal(false);
+    setSantaExpression("naughty");
+  };
+
+  // Santa expression handlers for ornament hover
+  const handleOrnamentHoverStart = () => {
+    if (!revealing) {
+      setSantaExpression("nice");
+    }
+  };
+
+  const handleOrnamentHoverEnd = () => {
+    if (!revealing) {
+      setSantaExpression("naughty");
+    }
   };
 
   const handleStart = () => {
@@ -353,7 +379,7 @@ export default function PlayerPage() {
         .layered-bg, .snow-effect { display: none !important; }
       `}</style>
       <main className="min-h-screen p-4 md:p-6 lg:p-8 relative z-10">
-        {/* Header - Full Width */}
+        {/* Header - Full Width with Santa below */}
         <div className="text-center mb-6 md:mb-8">
           <GlitchText
             text="SECRET SANTA"
@@ -362,7 +388,17 @@ export default function PlayerPage() {
             glitchIntensity="medium"
             continuous
           />
-          <p className="text-lg md:text-xl neon-text-cyan animate-pulse">New Year 2026</p>
+          <p className="text-lg md:text-xl neon-text-cyan animate-pulse mb-4">New Year 2026</p>
+
+          {/* Santa Face - Below titles */}
+          <div className="flex flex-col items-center">
+            <p className="text-sm neon-text-yellow mb-1">
+              {santaExpression === "naughty" && "Hmm... who will you pick?"}
+              {santaExpression === "nice" && "Ooh, good choice!"}
+              {santaExpression === "super-nice" && "★ Perfect match! ★"}
+            </p>
+            <SantaFace expression={santaExpression} />
+          </div>
         </div>
 
         {/* Main Content - Sidebar + Grid Layout */}
@@ -376,6 +412,7 @@ export default function PlayerPage() {
               totalParticipants={gameView.totalParticipants}
               hasRevealed={gameView.currentPlayer?.hasRevealed || false}
               onLogout={handleLogout}
+              santaExpression={santaExpression}
             />
 
             {/* Right - Avatar Grid */}
@@ -384,6 +421,8 @@ export default function PlayerPage() {
                 participants={gameView.participants}
                 onAvatarClick={handleAvatarClick}
                 disabled={revealing}
+                onHoverStart={handleOrnamentHoverStart}
+                onHoverEnd={handleOrnamentHoverEnd}
               />
             </div>
           </div>

@@ -11,6 +11,8 @@ interface AvatarCardProps {
   onClick?: () => void;
   disabled?: boolean;
   selected?: boolean;
+  onHoverStart?: () => void;
+  onHoverEnd?: () => void;
 }
 
 // Ornament colors based on state
@@ -28,17 +30,33 @@ export default function AvatarCard({
   onClick,
   disabled = false,
   selected = false,
+  onHoverStart,
+  onHoverEnd,
 }: AvatarCardProps) {
   const [isHovering, setIsHovering] = useState(false);
 
   const canClick = !disabled && !isCurrentPlayer;
   const colors = getOrnamentColors(isCurrentPlayer, isHovering && canClick, selected);
 
+  const handleMouseEnter = () => {
+    setIsHovering(true);
+    if (canClick && onHoverStart) {
+      onHoverStart();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+    if (canClick && onHoverEnd) {
+      onHoverEnd();
+    }
+  };
+
   return (
     <button
       onClick={canClick ? onClick : undefined}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       disabled={!canClick}
       className={cn(
         "relative flex flex-col items-center transition-all duration-300",

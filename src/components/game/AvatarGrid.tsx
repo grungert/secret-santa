@@ -8,6 +8,8 @@ interface AvatarGridProps {
   onAvatarClick?: (avatarId: string) => void;
   disabled?: boolean;
   selectedAvatarId?: string;
+  onHoverStart?: () => void;
+  onHoverEnd?: () => void;
 }
 
 export default function AvatarGrid({
@@ -15,6 +17,8 @@ export default function AvatarGrid({
   onAvatarClick,
   disabled = false,
   selectedAvatarId,
+  onHoverStart,
+  onHoverEnd,
 }: AvatarGridProps) {
   // Filter out the current player - they're shown in the sidebar
   const otherParticipants = participants.filter(p => !p.isCurrentPlayer);
@@ -41,6 +45,8 @@ export default function AvatarGrid({
           onClick={() => onAvatarClick?.(participant.avatarId)}
           disabled={disabled}
           selected={selectedAvatarId === participant.avatarId}
+          onHoverStart={onHoverStart}
+          onHoverEnd={onHoverEnd}
         />
       ))}
     </div>

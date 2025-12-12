@@ -1,38 +1,38 @@
 {
-  "id": "4470f7de-69df-41ae-8b31-f4642723eba8",
+  "id": "828a2a5c-6a76-46cf-8ba1-5ace06fc0472",
   "status": "active",
   "participants": [
     {
-      "id": "e0e458c4-392b-4d8c-ac8c-493e99e9647e",
+      "id": "4417b459-4648-45b4-98b4-8659f9be0cdb",
       "name": "Bojan",
       "normalizedName": "bojan",
-      "avatarId": "snowman-hat",
-      "assignedToId": "31802c40-43eb-4015-8d17-bd93b5546479",
-      "hasRevealed": false,
-      "revealedAt": null,
-      "createdAt": "2025-12-11T14:56:20.075Z"
-    },
-    {
-      "id": "31802c40-43eb-4015-8d17-bd93b5546479",
-      "name": "kaca",
-      "normalizedName": "kaca",
       "avatarId": "gingerbread",
-      "assignedToId": "1e309996-baa6-4191-9608-3d0b0625d1f5",
-      "hasRevealed": false,
-      "revealedAt": null,
-      "createdAt": "2025-12-11T14:56:23.448Z"
+      "assignedToId": "79fb7d3f-98f8-477a-bdf5-21056e4c1315",
+      "hasRevealed": true,
+      "revealedAt": "2025-12-12T11:37:33.541Z",
+      "createdAt": "2025-12-12T11:19:49.048Z"
     },
     {
-      "id": "1e309996-baa6-4191-9608-3d0b0625d1f5",
+      "id": "0f5903e2-4778-495f-9bf0-086dc97f4675",
+      "name": "Kaca",
+      "normalizedName": "kaca",
+      "avatarId": "penguin-santa",
+      "assignedToId": "4417b459-4648-45b4-98b4-8659f9be0cdb",
+      "hasRevealed": true,
+      "revealedAt": "2025-12-12T11:25:20.356Z",
+      "createdAt": "2025-12-12T11:19:52.270Z"
+    },
+    {
+      "id": "79fb7d3f-98f8-477a-bdf5-21056e4c1315",
       "name": "Fico",
       "normalizedName": "fico",
-      "avatarId": "santa-classic",
-      "assignedToId": "e0e458c4-392b-4d8c-ac8c-493e99e9647e",
+      "avatarId": "elf-happy",
+      "assignedToId": "0f5903e2-4778-495f-9bf0-086dc97f4675",
       "hasRevealed": false,
       "revealedAt": null,
-      "createdAt": "2025-12-11T14:56:27.401Z"
+      "createdAt": "2025-12-12T11:19:56.038Z"
     }
   ],
-  "createdAt": "2025-12-11T14:56:16.462Z",
-  "startedAt": "2025-12-11T14:56:28.844Z"
+  "createdAt": "2025-12-12T11:19:43.313Z",
+  "startedAt": "2025-12-12T11:19:57.831Z"
 }

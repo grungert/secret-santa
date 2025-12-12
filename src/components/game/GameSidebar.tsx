@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import PixelCard from "@/components/ui/PixelCard";
 import PixelAvatar from "@/components/game/PixelAvatar";
 import PixelButton from "@/components/ui/PixelButton";
+import SantaFace, { SantaExpression } from "@/components/game/SantaFace";
 
 interface GameSidebarProps {
   playerName: string;
@@ -14,6 +15,7 @@ interface GameSidebarProps {
   onLogout: () => void;
   onMusicToggle?: () => void;
   isMusicPlaying?: boolean;
+  santaExpression?: SantaExpression;
 }
 
 function CountdownTimer() {
@@ -95,6 +97,7 @@ export default function GameSidebar({
   onLogout,
   onMusicToggle,
   isMusicPlaying = false,
+  santaExpression = "naughty",
 }: GameSidebarProps) {
   return (
     <aside className="flex flex-col gap-4 w-full md:w-64 lg:w-72">
