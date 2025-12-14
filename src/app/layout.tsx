@@ -4,7 +4,7 @@ import "./globals.css";
 import LayeredBackground from "@/components/effects/LayeredBackground";
 import SnowEffect from "@/components/effects/SnowEffect";
 import FireworksEffect from "@/components/effects/FireworksEffect";
-import ScanlineOverlay from "@/components/effects/ScanlineOverlay";
+import RetroOverlay from "@/components/effects/RetroOverlay";
 
 const pixelFont = VT323({
   weight: "400",
@@ -38,7 +38,7 @@ export default function RootLayout({
         <div className="relative z-10">{children}</div>
 
         {/* CRT overlay effects (on top) */}
-        <ScanlineOverlay intensity="light" animated={true} />
+        <RetroOverlay />
       </body>
     </html>
   );
