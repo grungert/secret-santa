@@ -4,6 +4,7 @@ import {
   addParticipant,
   removeParticipant,
   startGame,
+  restartGame,
   getPlayerView,
 } from "@/lib/game-logic";
 import { ApiResponse, GameState, PlayerGameView } from "@/types";
@@ -70,6 +71,10 @@ export async function POST(
 
       case "START_GAME":
         result = startGame(state);
+        break;
+
+      case "RESTART_GAME":
+        result = restartGame(state);
         break;
 
       case "RESET_GAME":

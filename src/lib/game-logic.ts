@@ -234,6 +234,32 @@ export function revealAssignment(
 }
 
 /**
+ * Restart the game - keep participants but reset assignments and revealed status
+ */
+export function restartGame(state: GameState): { state: GameState; error?: string } {
+  if (state.participants.length < 3) {
+    return { state, error: "Need at least 3 participants to restart" };
+  }
+
+  // Reset all participants: clear assignments and revealed status
+  const resetParticipants = state.participants.map((p) => ({
+    ...p,
+    assignedToId: null,
+    hasRevealed: false,
+    revealedAt: null,
+  }));
+
+  return {
+    state: {
+      ...state,
+      status: "setup",
+      participants: resetParticipants,
+      startedAt: null,
+    },
+  };
+}
+
+/**
  * Get player's view of the game (hides sensitive information)
  */
 export function getPlayerView(

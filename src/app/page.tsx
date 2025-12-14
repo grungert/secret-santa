@@ -148,7 +148,7 @@ export default function PlayerPage() {
           setShowReveal(true);
           // Refresh game view
           fetchGameView();
-        }, 1500);
+        }, 3000);
       } else {
         setSantaExpression("naughty");
         alert(data.error || "Failed to reveal");

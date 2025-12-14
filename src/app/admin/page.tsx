@@ -75,6 +75,19 @@ export default function AdminPage() {
     setGameState(data.data);
   };
 
+  const handleRestartGame = async () => {
+    const res = await fetch("/api/game", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "RESTART_GAME" }),
+    });
+    const data = await res.json();
+    if (!data.success) {
+      throw new Error(data.error || "Failed to restart game");
+    }
+    setGameState(data.data);
+  };
+
   const handleResetGame = async () => {
     const res = await fetch("/api/game", {
       method: "POST",
@@ -167,6 +180,7 @@ export default function AdminPage() {
               participantCount={gameState.participants.length}
               revealedCount={revealedCount}
               onStartGame={handleStartGame}
+              onRestartGame={handleRestartGame}
               onResetGame={handleResetGame}
             />
 

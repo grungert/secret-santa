@@ -10,6 +10,7 @@ interface GameControlsProps {
   participantCount: number;
   revealedCount: number;
   onStartGame: () => Promise<void>;
+  onRestartGame: () => Promise<void>;
   onResetGame: () => Promise<void>;
 }
 
@@ -18,10 +19,12 @@ export default function GameControls({
   participantCount,
   revealedCount,
   onStartGame,
+  onRestartGame,
   onResetGame,
 }: GameControlsProps) {
-  const [loading, setLoading] = useState<"start" | "reset" | null>(null);
+  const [loading, setLoading] = useState<"start" | "restart" | "reset" | null>(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showRestartConfirm, setShowRestartConfirm] = useState(false);
 
   const canStart = status === "setup" && participantCount >= 3;
 
@@ -29,6 +32,16 @@ export default function GameControls({
     setLoading("start");
     try {
       await onStartGame();
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  const handleRestart = async () => {
+    setLoading("restart");
+    try {
+      await onRestartGame();
+      setShowRestartConfirm(false);
     } finally {
       setLoading(null);
     }
@@ -129,7 +142,43 @@ export default function GameControls({
           </div>
         )}
 
-        {/* Reset button */}
+        {/* Restart button - keep users, reset assignments */}
+        {(status === "active" || status === "completed") && (
+          !showRestartConfirm ? (
+            <PixelButton
+              variant="neonCyan"
+              size="sm"
+              className="w-full"
+              onClick={() => setShowRestartConfirm(true)}
+              disabled={loading !== null}
+            >
+              🔄 Restart Game (Keep Users)
+            </PixelButton>
+          ) : (
+            <div className="flex gap-2">
+              <PixelButton
+                variant="neonCyan"
+                size="sm"
+                className="flex-1"
+                onClick={handleRestart}
+                disabled={loading === "restart"}
+              >
+                {loading === "restart" ? "..." : "Confirm Restart"}
+              </PixelButton>
+              <PixelButton
+                variant="secondary"
+                size="sm"
+                className="flex-1"
+                onClick={() => setShowRestartConfirm(false)}
+                disabled={loading === "restart"}
+              >
+                Cancel
+              </PixelButton>
+            </div>
+          )
+        )}
+
+        {/* Reset button - delete everything */}
         {!showResetConfirm ? (
           <PixelButton
             variant="danger"
@@ -138,7 +187,7 @@ export default function GameControls({
             onClick={() => setShowResetConfirm(true)}
             disabled={loading !== null}
           >
-            Reset Game
+            🗑️ Reset All (Delete Users)
           </PixelButton>
         ) : (
           <div className="flex gap-2">
@@ -149,7 +198,7 @@ export default function GameControls({
               onClick={handleReset}
               disabled={loading === "reset"}
             >
-              {loading === "reset" ? "..." : "Confirm Reset"}
+              {loading === "reset" ? "..." : "Confirm Delete"}
             </PixelButton>
             <PixelButton
               variant="secondary"

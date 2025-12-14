@@ -54,28 +54,28 @@ export default function RevealModal({
       return;
     }
 
-    // Animation sequence
+    // Animation sequence - extended timings for dramatic reveal
     const timers: NodeJS.Timeout[] = [];
 
     // Stage 1: Show backdrop and start zoom
-    timers.push(setTimeout(() => setAnimationStage(1), 100));
+    timers.push(setTimeout(() => setAnimationStage(1), 300));
 
-    // Stage 2: Avatar fully revealed
-    timers.push(setTimeout(() => setAnimationStage(2), 900));
+    // Stage 2: Avatar fully revealed with glow
+    timers.push(setTimeout(() => setAnimationStage(2), 1500));
 
-    // Stage 3: Show confetti
+    // Stage 3: Show confetti and "You will buy a gift for..."
     timers.push(
       setTimeout(() => {
         setShowConfetti(true);
         setAnimationStage(3);
-      }, 1200)
+      }, 2500)
     );
 
-    // Stage 4: Show name with typewriter
-    timers.push(setTimeout(() => setAnimationStage(4), 1500));
+    // Stage 4: Show name with dramatic entrance from bottom
+    timers.push(setTimeout(() => setAnimationStage(4), 4000));
 
     // Stage 5: Show button
-    timers.push(setTimeout(() => setAnimationStage(5), 2500));
+    timers.push(setTimeout(() => setAnimationStage(5), 5500));
 
     return () => timers.forEach(clearTimeout);
   }, [isOpen]);
@@ -110,7 +110,7 @@ export default function RevealModal({
       )}
 
       {/* Content */}
-      <div className="relative z-10 text-center space-y-6">
+      <div className="relative z-10 text-center space-y-6 overflow-visible">
         {/* Neon glow ring effect */}
         {animationStage >= 2 && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -165,16 +165,18 @@ export default function RevealModal({
           </div>
         )}
 
-        {/* Name reveal with glitch text */}
+        {/* Name reveal with dramatic entrance animation */}
         {animationStage >= 4 && (
-          <div className="overflow-hidden">
-            <GlitchText
-              text={`${assignedToName}!`}
-              as="h2"
-              className="text-5xl md:text-6xl font-bold neon-text-pink"
-              glitchIntensity="medium"
-              continuous={false}
-            />
+          <div className="min-h-[100px] flex items-center justify-center overflow-visible">
+            <div className="animate-name-reveal">
+              <GlitchText
+                text={`${assignedToName}!`}
+                as="h2"
+                className="text-5xl md:text-7xl font-bold neon-text-pink drop-shadow-[0_0_30px_var(--neon-pink)]"
+                glitchIntensity="high"
+                continuous={false}
+              />
+            </div>
           </div>
         )}
 
