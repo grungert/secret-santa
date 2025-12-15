@@ -223,6 +223,16 @@ export default function PlayerPage() {
           Admin Panel →
         </a>
 
+        {/* Play Game button in bottom left */}
+        <PixelButton
+          onClick={() => window.location.href = '/game/game.html'}
+          variant="secondary"
+          size="sm"
+          className="absolute bottom-4 left-4 text-sm z-10"
+        >
+          🎄 PLAY GAME
+        </PixelButton>
+
         <div className="text-center relative z-10">
           <GlitchText
             text="SECRET SANTA"
