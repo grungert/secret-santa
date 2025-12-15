@@ -36,10 +36,12 @@ export default function NeonStatBar({
         {/* Left - Avatar */}
         <div className="flex items-center gap-3">
           <div
-            className="w-10 h-10 rounded-full overflow-hidden border-2 border-neon-pink"
+            className="w-10 h-10 rounded-lg overflow-hidden border-2 border-neon-pink bg-black/50 flex items-center justify-center"
             style={{ boxShadow: "0 0 8px var(--neon-pink)" }}
           >
-            <PixelAvatar avatarId={playerAvatarId} size="sm" />
+            <div className="scale-[0.6] origin-center">
+              <PixelAvatar avatarId={playerAvatarId} size="sm" />
+            </div>
           </div>
         </div>
 

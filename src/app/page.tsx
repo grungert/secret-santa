@@ -24,6 +24,17 @@ const ThreeBackground = dynamic(
 
 const STORAGE_KEY = "secret-santa-player";
 
+// Video gallery list
+const GALLERY_VIDEOS = [
+  { name: "Video 1", src: "/imgs/video1.mp4" },
+  { name: "Video 2", src: "/imgs/video2.mp4" },
+  { name: "Video 3", src: "/imgs/video3.mp4" },
+  { name: "Video 4", src: "/imgs/video4.mp4" },
+  { name: "Video 5", src: "/imgs/video5.mp4" },
+  { name: "Video 6", src: "/imgs/video6.mp4" },
+  { name: "Video 7", src: "/imgs/video7.mp4" },
+];
+
 export default function PlayerPage() {
   const [showStartScreen, setShowStartScreen] = useState(true);
   const [playerName, setPlayerName] = useState<string | null>(null);
@@ -48,6 +59,10 @@ export default function PlayerPage() {
 
   // Intro screen floating names
   const [introNames, setIntroNames] = useState<string[]>([]);
+
+  // Video gallery state
+  const [showVideoGallery, setShowVideoGallery] = useState(false);
+  const [galleryVideo, setGalleryVideo] = useState<string | null>(null);
 
   // Track if we've shown the reveal animation this session (to avoid showing it on every poll)
   const hasShownRevealRef = useRef(false);
@@ -160,7 +175,8 @@ export default function PlayerPage() {
   };
 
   const handleAvatarClick = async (targetId: string) => {
-    if (!playerName || revealing) return;
+    // Prevent clicks if: no player, already revealing, or already chose
+    if (!playerName || revealing || gameView?.currentPlayer?.hasRevealed) return;
 
     setRevealing(true);
     // Set Santa to "Super Nice" expression immediately
@@ -211,6 +227,28 @@ export default function PlayerPage() {
     setIsMusicPlaying(false);
     // Redirect to intro screen
     setShowStartScreen(true);
+  };
+
+  // Just dismiss the modal, stay on game screen to see progress
+  const handleDismissReveal = () => {
+    setShowReveal(false);
+    setRevealData(null);
+    setSantaExpression("naughty");
+    // Keep music playing - don't stop it
+    // Refresh game view to show updated progress (including chosen avatars list)
+    fetchGameView();
+  };
+
+  // Show reveal animation for users who already chose
+  const handleShowMyChoice = () => {
+    if (gameView?.currentPlayer?.hasRevealed && gameView.currentPlayer.assignedToName) {
+      setRevealData({
+        name: gameView.currentPlayer.assignedToName,
+        avatarId: gameView.currentPlayer.assignedToAvatarId || "mystery",
+        alreadyRevealed: true,
+      });
+      setShowReveal(true);
+    }
   };
 
   // Santa expression handlers for ornament hover
@@ -367,74 +405,7 @@ export default function PlayerPage() {
     );
   }
 
-  // Player already revealed - show their assignment
-  // NOTE: Also check !revealData to prevent race condition with polling interval
-  // If revealData is set, the reveal modal is in progress and we should stay on active game view
-  if (gameView.currentPlayer?.hasRevealed && gameView.currentPlayer.assignedToName && !revealData) {
-    return (
-      <>
-        <ThreeBackground musicEnabled={isMusicPlaying} />
-        <FloatingNames names={introNames} />
-        {/* Hide 2D background with CSS */}
-        <style jsx global>{`
-          .layered-bg, .snow-effect { display: none !important; }
-        `}</style>
-        <main className="min-h-screen flex flex-col items-center justify-center p-4 relative z-10">
-          <div className="text-center mb-8">
-            <GlitchText
-              text="SECRET SANTA"
-              as="h1"
-              className="text-4xl md:text-6xl neon-text-pink mb-2"
-              glitchIntensity="medium"
-              continuous
-            />
-            <p className="text-xl neon-text-cyan animate-pulse">New Year 2026</p>
-          </div>
-
-          <PixelCard variant="highlight" className="max-w-md text-center">
-            <p className="text-neon-cyan mb-4">
-              Hey {gameView.currentPlayer.name}! Your Secret Santa assignment:
-            </p>
-
-            <div className="flex flex-col items-center gap-4 my-6">
-              <div className="bg-black/60 p-4 border-4 border-neon-pink neon-glow-pink animate-neon-pulse">
-                <PixelAvatar
-                  avatarId={gameView.currentPlayer.assignedToAvatarId || "mystery"}
-                  size="lg"
-                />
-              </div>
-              <GlitchText
-                text={gameView.currentPlayer.assignedToName}
-                as="h2"
-                className="text-4xl neon-text-yellow"
-                glitchIntensity="subtle"
-                continuous={false}
-              />
-            </div>
-
-            <p className="neon-text-green animate-pulse">
-              ★ Buy them a nice gift! ★
-            </p>
-
-            <div className="mt-6 text-sm text-gray-400">
-              <p>
-                {gameView.revealedCount}/{gameView.totalParticipants} players have revealed
-              </p>
-            </div>
-          </PixelCard>
-
-          <button
-            onClick={handleLogout}
-            className="mt-4 text-sm text-gray-400 hover:text-neon-cyan transition-colors"
-          >
-            Logout
-          </button>
-        </main>
-      </>
-    );
-  }
-
-  // Active game - show avatar grid (no sidebar)
+  // Active game - show game screen with progress and available ornaments
   return (
     <>
       <ThreeBackground musicEnabled={isMusicPlaying} />
@@ -473,6 +444,35 @@ export default function PlayerPage() {
             hasRevealed={gameView.currentPlayer?.hasRevealed || false}
             onLogout={handleLogout}
           />
+
+          {/* Action buttons */}
+          <div className="flex items-center justify-center gap-4 mt-4">
+            {/* See My Choice button - only for users who already chose */}
+            {gameView.currentPlayer?.hasRevealed && gameView.currentPlayer.assignedToName && (
+              <button
+                onClick={handleShowMyChoice}
+                className="px-6 py-2 rounded-full border-2 border-neon-pink text-neon-pink hover:bg-neon-pink/20 transition-all"
+                style={{
+                  textShadow: "0 0 10px var(--neon-pink)",
+                  boxShadow: "0 0 15px rgba(255, 0, 255, 0.3)",
+                }}
+              >
+                🎁 See My Choice
+              </button>
+            )}
+
+            {/* Videos button */}
+            <button
+              onClick={() => setShowVideoGallery(true)}
+              className="px-6 py-2 rounded-full border-2 border-neon-cyan text-neon-cyan hover:bg-neon-cyan/20 transition-all"
+              style={{
+                textShadow: "0 0 10px var(--neon-cyan)",
+                boxShadow: "0 0 15px rgba(0, 255, 255, 0.3)",
+              }}
+            >
+              🎬 Videos
+            </button>
+          </div>
         </div>
 
         {/* Santa Face - Fixed Top Right */}
@@ -518,9 +518,80 @@ export default function PlayerPage() {
             assignedToName={revealData.name}
             assignedToAvatarId={revealData.avatarId}
             onClose={handleCloseReveal}
+            onDismiss={handleDismissReveal}
             onLogout={handleLogout}
             alreadyRevealed={revealData.alreadyRevealed}
           />
+        )}
+
+        {/* Video Gallery Modal */}
+        {showVideoGallery && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <div
+              className="absolute inset-0 bg-black/80"
+              onClick={() => {
+                setGalleryVideo(null);
+                setShowVideoGallery(false);
+              }}
+            />
+
+            {galleryVideo ? (
+              // Video player view
+              <div className="relative z-10 flex flex-col items-center">
+                <video
+                  src={galleryVideo}
+                  controls
+                  autoPlay
+                  className="max-w-4xl max-h-[70vh] rounded-lg"
+                  style={{
+                    boxShadow: "0 0 30px rgba(0, 255, 255, 0.5)",
+                  }}
+                />
+                <button
+                  onClick={() => setGalleryVideo(null)}
+                  className="mt-4 px-6 py-2 rounded-full border-2 border-neon-cyan text-neon-cyan hover:bg-neon-cyan/20 transition-all"
+                  style={{
+                    textShadow: "0 0 10px var(--neon-cyan)",
+                  }}
+                >
+                  ← Back to list
+                </button>
+              </div>
+            ) : (
+              // Video list view
+              <div
+                className="relative z-10 bg-black/90 p-6 rounded-xl border-2 border-neon-cyan min-w-[300px]"
+                style={{
+                  boxShadow: "0 0 30px rgba(0, 255, 255, 0.3)",
+                }}
+              >
+                <h3 className="text-2xl neon-text-cyan text-center mb-6">
+                  🎬 Videos
+                </h3>
+                <div className="flex flex-col gap-3">
+                  {GALLERY_VIDEOS.map((video) => (
+                    <button
+                      key={video.src}
+                      onClick={() => setGalleryVideo(video.src)}
+                      className="px-6 py-3 rounded-lg border border-neon-pink/50 text-neon-pink hover:bg-neon-pink/20 hover:border-neon-pink transition-all text-left"
+                      style={{
+                        textShadow: "0 0 8px var(--neon-pink)",
+                      }}
+                    >
+                      ▶ {video.name}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => setShowVideoGallery(false)}
+                  className="mt-6 w-full px-6 py-2 rounded-full border border-gray-500 text-gray-400 hover:text-white hover:border-white transition-all"
+                >
+                  Close
+                </button>
+              </div>
+            )}
+          </div>
         )}
       </main>
     </>

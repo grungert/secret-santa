@@ -11,9 +11,21 @@ interface RevealModalProps {
   assignedToName: string;
   assignedToAvatarId: string;
   onClose: () => void;
+  onDismiss?: () => void;
   onLogout?: () => void;
   alreadyRevealed?: boolean;
 }
+
+// Available reveal videos
+const REVEAL_VIDEOS = [
+  "/imgs/video1.mp4",
+  "/imgs/video2.mp4",
+  "/imgs/video3.mp4",
+  "/imgs/video4.mp4",
+  "/imgs/video5.mp4",
+  "/imgs/video6.mp4",
+  "/imgs/video7.mp4",
+];
 
 // Neon confetti piece component
 function ConfettiPiece({ index }: { index: number }) {
@@ -43,6 +55,7 @@ export default function RevealModal({
   assignedToName,
   assignedToAvatarId,
   onClose,
+  onDismiss,
   onLogout,
   alreadyRevealed = false,
 }: RevealModalProps) {
@@ -51,6 +64,7 @@ export default function RevealModal({
   const [animationStage, setAnimationStage] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
   const [videoKey, setVideoKey] = useState(0);
+  const [videoSrc, setVideoSrc] = useState(REVEAL_VIDEOS[0]);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Reset states when modal opens/closes
@@ -61,6 +75,9 @@ export default function RevealModal({
       setAnimationStage(0);
       setShowConfetti(false);
       setVideoKey(prev => prev + 1); // Force video remount
+      // Select random video
+      const randomVideo = REVEAL_VIDEOS[Math.floor(Math.random() * REVEAL_VIDEOS.length)];
+      setVideoSrc(randomVideo);
     } else {
       // Also reset when modal closes (safeguard for stale state)
       setShowVideo(true);
@@ -131,10 +148,10 @@ export default function RevealModal({
         onClick={animationStage >= 5 ? onClose : undefined}
       />
 
-      {/* X Close button */}
+      {/* X Close button - just dismisses modal, stays on game screen */}
       {animationStage >= 3 && (
         <button
-          onClick={onClose}
+          onClick={onDismiss || onClose}
           className="absolute top-6 right-6 z-50 w-12 h-12 flex items-center justify-center rounded-full bg-black/50 hover:bg-black/70 transition-all group"
           style={{
             boxShadow: '0 0 20px rgba(255, 0, 255, 0.5)',
@@ -164,7 +181,7 @@ export default function RevealModal({
             muted
             autoPlay
           >
-            <source src="/imgs/video.mp4" type="video/mp4" />
+            <source src={videoSrc} type="video/mp4" />
           </video>
           {/* Skip button */}
           <button
