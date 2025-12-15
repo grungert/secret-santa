@@ -160,15 +160,30 @@ export default function PlayerPage() {
   };
 
   const handleLogout = () => {
-    console.log("handleLogout called");
+    // Clear localStorage
     localStorage.removeItem(STORAGE_KEY);
+
+    // Reset player/game state
     setPlayerName(null);
     setGameView(null);
-    hasShownRevealRef.current = false; // Reset so animation shows again on next login
-    // Stop music using global function
-    console.log("window.stopSecretSantaMusic exists:", !!window.stopSecretSantaMusic);
+    setLoginError("");
+
+    // Reset reveal state
+    setShowReveal(false);
+    setRevealData(null);
+    setRevealing(false);
+    hasShownRevealRef.current = false;
+
+    // Reset UI state
+    setSantaExpression("naughty");
+    setShowStartScreen(true);
+
+    // Close video gallery
+    setShowVideoGallery(false);
+    setGalleryVideo(null);
+
+    // Stop music
     if (typeof window !== "undefined" && window.stopSecretSantaMusic) {
-      console.log("Calling stopSecretSantaMusic");
       window.stopSecretSantaMusic();
     }
     setIsMusicPlaying(false);
