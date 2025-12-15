@@ -6,18 +6,18 @@
       "id": "cfb9e682-2f36-4f09-8324-ff470ff7b181",
       "name": "Bojan",
       "normalizedName": "bojan",
-      "avatarId": "santa-cool",
-      "assignedToId": "db5bf273-4d67-4be0-a7c6-a2f967137458",
-      "hasRevealed": true,
-      "revealedAt": "2025-12-15T08:54:29.199Z",
+      "avatarId": "elf-happy",
+      "assignedToId": "b139abe3-23e6-4c50-815f-ab66d07a145c",
+      "hasRevealed": false,
+      "revealedAt": null,
       "createdAt": "2025-12-12T11:42:09.621Z"
     },
     {
       "id": "db5bf273-4d67-4be0-a7c6-a2f967137458",
       "name": "Kaca",
       "normalizedName": "kaca",
-      "avatarId": "elf-mischief",
-      "assignedToId": "b139abe3-23e6-4c50-815f-ab66d07a145c",
+      "avatarId": "gingerbread",
+      "assignedToId": "cfb9e682-2f36-4f09-8324-ff470ff7b181",
       "hasRevealed": false,
       "revealedAt": null,
       "createdAt": "2025-12-12T11:42:12.830Z"
@@ -27,12 +27,12 @@
       "name": "Fico",
       "normalizedName": "fico",
       "avatarId": "snowman-scarf",
-      "assignedToId": "cfb9e682-2f36-4f09-8324-ff470ff7b181",
+      "assignedToId": "db5bf273-4d67-4be0-a7c6-a2f967137458",
       "hasRevealed": false,
       "revealedAt": null,
       "createdAt": "2025-12-12T11:42:16.046Z"
     }
   ],
   "createdAt": "2025-12-12T11:42:04.918Z",
-  "startedAt": "2025-12-14T12:26:15.520Z"
+  "startedAt": "2025-12-15T12:21:00.212Z"
 }

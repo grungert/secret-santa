@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import PixelAvatar from "./PixelAvatar";
 import PixelButton from "@/components/ui/PixelButton";
 import GlitchText from "@/components/effects/GlitchText";
@@ -44,41 +44,73 @@ export default function RevealModal({
   onClose,
   alreadyRevealed = false,
 }: RevealModalProps) {
+  const [showVideo, setShowVideo] = useState(true);
+  const [videoLoading, setVideoLoading] = useState(true);
   const [animationStage, setAnimationStage] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [videoKey, setVideoKey] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Reset states when modal opens/closes
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
+      console.log("Modal opened - resetting video state");
+      setShowVideo(true);
+      setVideoLoading(true);
       setAnimationStage(0);
       setShowConfetti(false);
-      return;
+      setVideoKey(prev => prev + 1); // Force video remount
+    } else {
+      // Also reset when modal closes (safeguard for stale state)
+      setShowVideo(true);
+      setVideoLoading(true);
+      setAnimationStage(0);
+      setShowConfetti(false);
     }
-
-    // Animation sequence - extended timings for dramatic reveal
-    const timers: NodeJS.Timeout[] = [];
-
-    // Stage 1: Show backdrop and start zoom
-    timers.push(setTimeout(() => setAnimationStage(1), 300));
-
-    // Stage 2: Avatar fully revealed with glow
-    timers.push(setTimeout(() => setAnimationStage(2), 1500));
-
-    // Stage 3: Show confetti and "You will buy a gift for..."
-    timers.push(
-      setTimeout(() => {
-        setShowConfetti(true);
-        setAnimationStage(3);
-      }, 2500)
-    );
-
-    // Stage 4: Show name with dramatic entrance from bottom
-    timers.push(setTimeout(() => setAnimationStage(4), 4000));
-
-    // Stage 5: Show button
-    timers.push(setTimeout(() => setAnimationStage(5), 5500));
-
-    return () => timers.forEach(clearTimeout);
   }, [isOpen]);
+
+  // Start reveal animation after video ends
+  const startRevealAnimation = () => {
+    setShowVideo(false);
+
+    // Animation sequence
+    setTimeout(() => setAnimationStage(1), 300);
+    setTimeout(() => setAnimationStage(2), 1200);
+    setTimeout(() => {
+      setShowConfetti(true);
+      setAnimationStage(3);
+    }, 2000);
+    setTimeout(() => setAnimationStage(4), 3000);
+    setTimeout(() => setAnimationStage(5), 4000);
+  };
+
+  const handleVideoLoaded = () => {
+    console.log("Video loaded successfully");
+    setVideoLoading(false);
+    // Try to play after loaded
+    if (videoRef.current) {
+      videoRef.current.play().catch((err) => {
+        console.log("Autoplay blocked, user needs to interact:", err);
+      });
+    }
+  };
+
+  const handleVideoEnded = () => {
+    console.log("Video ended");
+    startRevealAnimation();
+  };
+
+  const handleVideoError = (e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
+    console.error("Video error:", e);
+    // Don't immediately skip - give it a chance to load
+  };
+
+  const handleSkipVideo = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
+    startRevealAnimation();
+  };
 
   if (!isOpen) return null;
 
@@ -87,18 +119,50 @@ export default function RevealModal({
       className={cn(
         "fixed inset-0 z-[100] flex items-center justify-center p-4",
         "transition-opacity duration-300",
-        animationStage >= 1 ? "opacity-100" : "opacity-0"
+        isOpen ? "opacity-100" : "opacity-0"
       )}
     >
-      {/* Backdrop with neon gradient */}
+      {/* Backdrop with neon gradient - more transparent to show 3D background */}
       <div
-        className="absolute inset-0 backdrop-blur-md"
+        className="absolute inset-0 backdrop-blur-sm"
         style={{
           background:
-            "radial-gradient(ellipse at center, rgba(26, 10, 46, 0.95) 0%, rgba(10, 10, 15, 0.98) 100%)",
+            "radial-gradient(ellipse at center, rgba(26, 10, 46, 0.7) 0%, rgba(10, 10, 15, 0.75) 100%)",
         }}
         onClick={animationStage >= 5 ? onClose : undefined}
       />
+
+      {/* Video overlay - shows before reveal */}
+      {showVideo && (
+        <div className="absolute inset-0 z-30 flex items-center justify-center bg-black">
+          {/* Loading indicator */}
+          {videoLoading && (
+            <div className="absolute inset-0 flex items-center justify-center z-10">
+              <div className="text-white text-xl animate-pulse">Loading video...</div>
+            </div>
+          )}
+          <video
+            key={videoKey}
+            ref={videoRef}
+            className="w-full h-full object-contain"
+            onLoadedData={handleVideoLoaded}
+            onEnded={handleVideoEnded}
+            onError={handleVideoError}
+            playsInline
+            muted
+            autoPlay
+          >
+            <source src="/imgs/video.mp4" type="video/mp4" />
+          </video>
+          {/* Skip button */}
+          <button
+            onClick={handleSkipVideo}
+            className="absolute bottom-8 right-8 px-4 py-2 bg-black/50 rounded text-white/80 hover:text-white hover:bg-black/70 text-sm transition-all z-20"
+          >
+            Skip →
+          </button>
+        </div>
+      )}
 
       {/* Neon Confetti */}
       {showConfetti && (
@@ -111,26 +175,29 @@ export default function RevealModal({
 
       {/* Content */}
       <div className="relative z-10 text-center space-y-6 overflow-visible">
-        {/* Neon glow ring effect */}
-        {animationStage >= 2 && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div
-              className="w-56 h-56 rounded-full animate-neon-pulse"
-              style={{
-                background:
-                  "radial-gradient(circle, transparent 40%, var(--neon-pink-glow) 60%, transparent 70%)",
-              }}
-            />
-          </div>
-        )}
-
         {/* Avatar with zoom animation */}
         <div
           className={cn(
-            "relative mx-auto",
+            "relative mx-auto inline-block",
             animationStage >= 1 && "animate-reveal-zoom"
           )}
         >
+          {/* Neon glow ring effect - positioned around avatar */}
+          {animationStage >= 2 && (
+            <div
+              className="absolute inset-0 flex items-center justify-center pointer-events-none"
+              style={{ transform: "scale(2)" }}
+            >
+              <div
+                className="w-full h-full rounded-full animate-neon-pulse"
+                style={{
+                  background:
+                    "radial-gradient(circle, transparent 30%, var(--neon-pink-glow) 50%, transparent 70%)",
+                }}
+              />
+            </div>
+          )}
+
           <div className="relative">
             {/* Multi-color neon glow behind avatar */}
             <div
@@ -173,7 +240,7 @@ export default function RevealModal({
                 text={`${assignedToName}!`}
                 as="h2"
                 className="text-5xl md:text-7xl font-bold neon-text-pink drop-shadow-[0_0_30px_var(--neon-pink)]"
-                glitchIntensity="high"
+                glitchIntensity="intense"
                 continuous={false}
               />
             </div>

@@ -79,6 +79,7 @@ export interface PlayerGameView {
   participants: PlayerViewParticipant[];
   currentPlayer: {
     name: string;
+    avatarId: string;
     hasRevealed: boolean;
     assignedToName?: string;
     assignedToAvatarId?: string;

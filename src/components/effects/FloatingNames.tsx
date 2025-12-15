@@ -13,20 +13,20 @@ const GRADIENTS = ["gradient-pink-cyan", "gradient-rainbow", "gradient-fire", "g
 const DEPTH_LAYERS = {
   back: {
     class: "depth-back",
-    sizeRange: [0.9, 1.3], // rem
-    durationRange: [20, 28], // seconds
+    sizeRange: [0.9, 1.3] as [number, number], // rem
+    durationRange: [20, 28] as [number, number], // seconds
     zIndex: 1,
   },
   mid: {
     class: "depth-mid",
-    sizeRange: [1.5, 2.2],
-    durationRange: [14, 20],
+    sizeRange: [1.5, 2.2] as [number, number],
+    durationRange: [14, 20] as [number, number],
     zIndex: 2,
   },
   front: {
     class: "depth-front",
-    sizeRange: [2.5, 3.5],
-    durationRange: [10, 14],
+    sizeRange: [2.5, 3.5] as [number, number],
+    durationRange: [10, 14] as [number, number],
     zIndex: 3,
   },
 };

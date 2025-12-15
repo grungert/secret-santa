@@ -274,6 +274,7 @@ export function getPlayerView(
   }>;
   currentPlayer: {
     name: string;
+    avatarId: string;
     hasRevealed: boolean;
     assignedToName?: string;
     assignedToAvatarId?: string;
@@ -309,6 +310,7 @@ export function getPlayerView(
     currentPlayer: currentPlayer
       ? {
           name: currentPlayer.name,
+          avatarId: currentPlayer.avatarId,
           hasRevealed: currentPlayer.hasRevealed,
           assignedToName,
           assignedToAvatarId,

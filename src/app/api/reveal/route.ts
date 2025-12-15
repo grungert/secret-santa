@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readGameState, writeGameState } from "@/lib/storage";
+import { atomicUpdateGameState } from "@/lib/storage";
 import { revealAssignment } from "@/lib/game-logic";
-import { ApiResponse, RevealResponse } from "@/types";
+import { ApiResponse, RevealResponse, Participant } from "@/types";
 
 // POST: Reveal a player's Secret Santa assignment
 export async function POST(
@@ -18,8 +18,22 @@ export async function POST(
       );
     }
 
-    const state = await readGameState();
-    const result = revealAssignment(state, playerName);
+    // Use atomic update to prevent race conditions
+    const result = await atomicUpdateGameState<{
+      assignedTo?: Participant;
+      error?: string;
+      alreadyRevealed?: boolean;
+    }>((state) => {
+      const revealResult = revealAssignment(state, playerName);
+      return {
+        state: revealResult.state,
+        result: {
+          assignedTo: revealResult.assignedTo,
+          error: revealResult.error,
+          alreadyRevealed: revealResult.alreadyRevealed,
+        },
+      };
+    });
 
     if (result.error) {
       return NextResponse.json(
@@ -34,9 +48,6 @@ export async function POST(
         { status: 400 }
       );
     }
-
-    // Save updated state (marks player as revealed)
-    await writeGameState(result.state);
 
     return NextResponse.json({
       success: true,

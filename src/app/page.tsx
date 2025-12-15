@@ -169,10 +169,10 @@ export default function PlayerPage() {
         });
 
         // Delay showing the reveal modal to let Santa's "Super Nice" animation play
+        // NOTE: Do NOT call fetchGameView() here - it would update hasRevealed=true
+        // which triggers the static card view before modal can show
         setTimeout(() => {
           setShowReveal(true);
-          // Refresh game view
-          fetchGameView();
         }, 3000);
       } else {
         setSantaExpression("naughty");
@@ -188,7 +188,10 @@ export default function PlayerPage() {
 
   const handleCloseReveal = () => {
     setShowReveal(false);
+    setRevealData(null); // Reset to unmount modal completely - ensures fresh video state next time
     setSantaExpression("naughty");
+    // Now update game view to show the "already revealed" static card
+    fetchGameView();
   };
 
   // Santa expression handlers for ornament hover
@@ -346,7 +349,9 @@ export default function PlayerPage() {
   }
 
   // Player already revealed - show their assignment
-  if (gameView.currentPlayer?.hasRevealed && gameView.currentPlayer.assignedToName) {
+  // NOTE: Also check !revealData to prevent race condition with polling interval
+  // If revealData is set, the reveal modal is in progress and we should stay on active game view
+  if (gameView.currentPlayer?.hasRevealed && gameView.currentPlayer.assignedToName && !revealData) {
     return (
       <>
         <ThreeBackground musicEnabled={isMusicPlaying} />
