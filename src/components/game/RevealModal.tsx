@@ -54,7 +54,6 @@ export default function RevealModal({
   // Reset states when modal opens/closes
   useEffect(() => {
     if (isOpen) {
-      console.log("Modal opened - resetting video state");
       setShowVideo(true);
       setVideoLoading(true);
       setAnimationStage(0);
@@ -85,7 +84,6 @@ export default function RevealModal({
   };
 
   const handleVideoLoaded = () => {
-    console.log("Video loaded successfully");
     setVideoLoading(false);
     // Try to play after loaded
     if (videoRef.current) {
@@ -96,7 +94,6 @@ export default function RevealModal({
   };
 
   const handleVideoEnded = () => {
-    console.log("Video ended");
     startRevealAnimation();
   };
 

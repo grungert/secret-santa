@@ -58,27 +58,19 @@ export default function ThreeBackground({
   // Expose global stop function - use module-level ref for reliability
   useEffect(() => {
     window.stopSecretSantaMusic = () => {
-      console.log("stopSecretSantaMusic called");
-
       // Suspend the AudioContext - this definitely stops all audio
       if (globalListenerRef) {
         const context = globalListenerRef.context;
-        console.log("AudioContext state:", context.state);
         if (context.state === "running") {
-          context.suspend().then(() => {
-            console.log("AudioContext suspended");
-          });
+          context.suspend();
         }
       }
-
-      // Also try stopping the audio directly
+      // Also pause and disconnect the audio
       if (globalAudioRef && globalAudioRef.isPlaying) {
         globalAudioRef.pause();
         globalAudioRef.disconnect();
-        console.log("globalAudioRef paused and disconnected");
       }
     };
-    console.log("stopSecretSantaMusic function registered on window");
   }, []);
   const uniformsRef = useRef({
     time: { value: 0.0 },

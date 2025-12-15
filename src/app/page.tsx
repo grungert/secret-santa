@@ -187,14 +187,11 @@ export default function PlayerPage() {
   };
 
   const handleCloseReveal = () => {
-    console.log("handleCloseReveal called");
     setShowReveal(false);
     setRevealData(null); // Reset to unmount modal completely - ensures fresh video state next time
     setSantaExpression("naughty");
     // Stop music immediately using global function before unmounting
-    console.log("window.stopSecretSantaMusic exists:", typeof window !== "undefined" && !!window.stopSecretSantaMusic);
     if (typeof window !== "undefined" && window.stopSecretSantaMusic) {
-      console.log("Calling window.stopSecretSantaMusic()");
       window.stopSecretSantaMusic();
     }
     setIsMusicPlaying(false);
