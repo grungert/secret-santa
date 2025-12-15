@@ -1,38 +1,38 @@
 {
   "id": "a2147266-962e-4ba1-9a4b-eb680accd92c",
-  "status": "active",
+  "status": "completed",
   "participants": [
     {
       "id": "cfb9e682-2f36-4f09-8324-ff470ff7b181",
       "name": "Bojan",
       "normalizedName": "bojan",
-      "avatarId": "present-green",
+      "avatarId": "gingerbread",
       "assignedToId": "b139abe3-23e6-4c50-815f-ab66d07a145c",
-      "hasRevealed": false,
-      "revealedAt": null,
+      "hasRevealed": true,
+      "revealedAt": "2025-12-15T17:39:25.375Z",
       "createdAt": "2025-12-12T11:42:09.621Z"
     },
     {
       "id": "db5bf273-4d67-4be0-a7c6-a2f967137458",
       "name": "Kaca",
       "normalizedName": "kaca",
-      "avatarId": "gingerbread",
+      "avatarId": "present-green",
       "assignedToId": "cfb9e682-2f36-4f09-8324-ff470ff7b181",
-      "hasRevealed": false,
-      "revealedAt": null,
+      "hasRevealed": true,
+      "revealedAt": "2025-12-15T17:45:41.097Z",
       "createdAt": "2025-12-12T11:42:12.830Z"
     },
     {
       "id": "b139abe3-23e6-4c50-815f-ab66d07a145c",
       "name": "Fico",
       "normalizedName": "fico",
-      "avatarId": "present-red",
+      "avatarId": "elf-happy",
       "assignedToId": "db5bf273-4d67-4be0-a7c6-a2f967137458",
       "hasRevealed": true,
-      "revealedAt": "2025-12-15T16:30:54.916Z",
+      "revealedAt": "2025-12-15T17:40:44.405Z",
       "createdAt": "2025-12-12T11:42:16.046Z"
     }
   ],
   "createdAt": "2025-12-12T11:42:04.918Z",
-  "startedAt": "2025-12-15T16:30:45.504Z"
+  "startedAt": "2025-12-15T17:39:14.881Z"
 }

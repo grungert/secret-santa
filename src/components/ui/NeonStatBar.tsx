@@ -69,7 +69,10 @@ export default function NeonStatBar({
           )}
           <button
             onClick={onLogout}
-            className="text-xs text-gray-400 hover:text-neon-pink transition-colors"
+            className="text-sm px-3 py-1 rounded border border-neon-pink/50 text-neon-pink hover:bg-neon-pink/20 hover:border-neon-pink transition-all"
+            style={{
+              textShadow: "0 0 8px var(--neon-pink)",
+            }}
           >
             Logout
           </button>

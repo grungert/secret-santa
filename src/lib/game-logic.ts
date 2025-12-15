@@ -99,10 +99,16 @@ export function addParticipant(
     return { state, error: "A participant with this name already exists" };
   }
 
-  // Assign avatar based on position (cycle through available avatars)
-  const avatarIndex = state.participants.length % avatars.length;
-  const shuffledAvatars = shuffleAvatars();
-  const avatarId = shuffledAvatars[avatarIndex].id;
+  // Get avatars already used by existing participants
+  const usedAvatarIds = new Set(state.participants.map((p) => p.avatarId));
+
+  // Find available avatars (not yet used)
+  const availableAvatars = avatars.filter((a) => !usedAvatarIds.has(a.id));
+
+  // Pick a random avatar from available ones, or fallback to any if all used
+  const avatarPool = availableAvatars.length > 0 ? availableAvatars : avatars;
+  const randomIndex = Math.floor(Math.random() * avatarPool.length);
+  const avatarId = avatarPool[randomIndex].id;
 
   const participant = createParticipant(trimmedName, avatarId);
 
@@ -139,29 +145,26 @@ export function removeParticipant(
 }
 
 /**
- * Start the game - generate random assignments
+ * Start the game - players will choose who to buy for (no pre-assignment)
  */
 export function startGame(state: GameState): { state: GameState; error?: string } {
   if (state.status !== "setup") {
     return { state, error: "Game has already started" };
   }
 
-  if (state.participants.length < 3) {
-    return { state, error: "Need at least 3 participants to start" };
+  if (state.participants.length < 2) {
+    return { state, error: "Need at least 2 participants to start" };
   }
 
-  // Generate assignments
-  const participantIds = state.participants.map((p) => p.id);
-  const assignments = generateAssignments(participantIds);
-
-  // Shuffle avatars and reassign to make it more random
+  // Shuffle avatars and take first N unique avatars for N participants
   const shuffledAvatars = shuffleAvatars();
 
-  // Update participants with assignments and shuffled avatars
+  // Update participants with unique shuffled avatars (no pre-assignment)
   const updatedParticipants = state.participants.map((p, index) => ({
     ...p,
-    avatarId: shuffledAvatars[index % shuffledAvatars.length].id,
-    assignedToId: assignments.get(p.id) || null,
+    avatarId: shuffledAvatars[index].id, // Each participant gets a unique avatar
+    assignedToId: null, // No pre-assignment - users will choose
+    hasRevealed: false,
   }));
 
   return {
@@ -175,11 +178,12 @@ export function startGame(state: GameState): { state: GameState; error?: string 
 }
 
 /**
- * Reveal a player's assignment
+ * Choose who to buy a gift for (user picks from available participants)
  */
-export function revealAssignment(
+export function chooseAssignment(
   state: GameState,
-  playerName: string
+  playerName: string,
+  targetId: string
 ): { state: GameState; assignedTo?: Participant; error?: string; alreadyRevealed?: boolean } {
   if (state.status !== "active") {
     return { state, error: "Game is not active" };
@@ -196,14 +200,9 @@ export function revealAssignment(
 
   const player = state.participants[playerIndex];
 
-  // Find who they're assigned to give a gift to
-  const assignedTo = state.participants.find((p) => p.id === player.assignedToId);
-  if (!assignedTo) {
-    return { state, error: "Assignment not found" };
-  }
-
-  // Check if already revealed
+  // Check if player already chose
   if (player.hasRevealed) {
+    const assignedTo = state.participants.find((p) => p.id === player.assignedToId);
     return {
       state,
       assignedTo,
@@ -211,15 +210,37 @@ export function revealAssignment(
     };
   }
 
-  // Update player as revealed
+  // Find the target participant
+  const targetIndex = state.participants.findIndex((p) => p.id === targetId);
+  if (targetIndex === -1) {
+    return { state, error: "Target not found" };
+  }
+
+  const target = state.participants[targetIndex];
+
+  // Can't choose yourself
+  if (target.id === player.id) {
+    return { state, error: "You cannot choose yourself" };
+  }
+
+  // Check if target is already chosen by someone else
+  const alreadyChosen = state.participants.some(
+    (p) => p.hasRevealed && p.assignedToId === targetId
+  );
+  if (alreadyChosen) {
+    return { state, error: "This person has already been chosen by someone else" };
+  }
+
+  // Update player with their choice
   const updatedParticipants = [...state.participants];
   updatedParticipants[playerIndex] = {
     ...player,
+    assignedToId: targetId,
     hasRevealed: true,
     revealedAt: new Date().toISOString(),
   };
 
-  // Check if all have revealed
+  // Check if all have chosen
   const allRevealed = updatedParticipants.every((p) => p.hasRevealed);
 
   return {
@@ -228,7 +249,7 @@ export function revealAssignment(
       status: allRevealed ? "completed" : "active",
       participants: updatedParticipants,
     },
-    assignedTo,
+    assignedTo: target,
     alreadyRevealed: false,
   };
 }
@@ -268,9 +289,16 @@ export function getPlayerView(
 ): {
   status: GameState["status"];
   participants: Array<{
+    id: string;
     avatarId: string;
     hasRevealed: boolean;
     isCurrentPlayer: boolean;
+    isAvailable: boolean;
+  }>;
+  availableParticipants: Array<{
+    id: string;
+    avatarId: string;
+    name: string;
   }>;
   currentPlayer: {
     name: string;
@@ -281,6 +309,7 @@ export function getPlayerView(
   } | null;
   totalParticipants: number;
   revealedCount: number;
+  chosenAvatars: Array<{ avatarId: string; name: string }>;
 } {
   const normalizedName = playerName.trim().toLowerCase();
   const currentPlayer = state.participants.find(
@@ -300,13 +329,33 @@ export function getPlayerView(
     }
   }
 
+  // Calculate chosen avatars - participants who have been chosen as someone's gift recipient
+  const chosenParticipantIds = state.participants
+    .filter((p) => p.hasRevealed && p.assignedToId)
+    .map((p) => p.assignedToId);
+
+  const chosenAvatars = state.participants
+    .filter((p) => chosenParticipantIds.includes(p.id))
+    .map((p) => ({ avatarId: p.avatarId, name: p.name }));
+
+  // Available participants: not chosen by anyone, not the current player
+  const availableParticipants = state.participants
+    .filter((p) =>
+      !chosenParticipantIds.includes(p.id) &&
+      p.normalizedName !== normalizedName
+    )
+    .map((p) => ({ id: p.id, avatarId: p.avatarId, name: p.name }));
+
   return {
     status: state.status,
     participants: state.participants.map((p) => ({
+      id: p.id,
       avatarId: p.avatarId,
       hasRevealed: p.hasRevealed,
       isCurrentPlayer: p.normalizedName === normalizedName,
+      isAvailable: !chosenParticipantIds.includes(p.id) && p.normalizedName !== normalizedName,
     })),
+    availableParticipants,
     currentPlayer: currentPlayer
       ? {
           name: currentPlayer.name,
@@ -318,5 +367,6 @@ export function getPlayerView(
       : null,
     totalParticipants: state.participants.length,
     revealedCount: state.participants.filter((p) => p.hasRevealed).length,
+    chosenAvatars,
   };
 }

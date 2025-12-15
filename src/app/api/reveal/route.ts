@@ -1,19 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { atomicUpdateGameState } from "@/lib/storage";
-import { revealAssignment } from "@/lib/game-logic";
+import { chooseAssignment } from "@/lib/game-logic";
 import { ApiResponse, RevealResponse, Participant } from "@/types";
 
-// POST: Reveal a player's Secret Santa assignment
+// POST: Choose who to buy a gift for
 export async function POST(
   request: NextRequest
 ): Promise<NextResponse<ApiResponse<RevealResponse>>> {
   try {
     const body = await request.json();
-    const { playerName } = body;
+    const { playerName, targetId } = body;
 
     if (!playerName || typeof playerName !== "string") {
       return NextResponse.json(
         { success: false, error: "Player name is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!targetId || typeof targetId !== "string") {
+      return NextResponse.json(
+        { success: false, error: "Target ID is required" },
         { status: 400 }
       );
     }
@@ -24,13 +31,13 @@ export async function POST(
       error?: string;
       alreadyRevealed?: boolean;
     }>((state) => {
-      const revealResult = revealAssignment(state, playerName);
+      const chooseResult = chooseAssignment(state, playerName, targetId);
       return {
-        state: revealResult.state,
+        state: chooseResult.state,
         result: {
-          assignedTo: revealResult.assignedTo,
-          error: revealResult.error,
-          alreadyRevealed: revealResult.alreadyRevealed,
+          assignedTo: chooseResult.assignedTo,
+          error: chooseResult.error,
+          alreadyRevealed: chooseResult.alreadyRevealed,
         },
       };
     });

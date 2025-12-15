@@ -68,15 +68,31 @@ export interface RevealResponse {
 
 // Player view of another participant (hides sensitive info)
 export interface PlayerViewParticipant {
+  id: string;
   avatarId: string;
   hasRevealed: boolean;
   isCurrentPlayer: boolean;
+  isAvailable: boolean;
+}
+
+// Available participant for choosing
+export interface AvailableParticipant {
+  id: string;
+  avatarId: string;
+  name: string;
+}
+
+// Chosen avatar (someone is buying for this person)
+export interface ChosenAvatar {
+  avatarId: string;
+  name: string;
 }
 
 // Player's game view
 export interface PlayerGameView {
   status: GameStatus;
   participants: PlayerViewParticipant[];
+  availableParticipants: AvailableParticipant[];
   currentPlayer: {
     name: string;
     avatarId: string;
@@ -86,6 +102,7 @@ export interface PlayerGameView {
   } | null;
   totalParticipants: number;
   revealedCount: number;
+  chosenAvatars: ChosenAvatar[];
 }
 
 // Admin action types

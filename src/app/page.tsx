@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import LoginForm from "@/components/game/LoginForm";
 import AvatarGrid from "@/components/game/AvatarGrid";
+import ChosenAvatarsSidebar from "@/components/game/ChosenAvatarsSidebar";
 import RevealModal from "@/components/game/RevealModal";
 import PixelCard from "@/components/ui/PixelCard";
 import PixelAvatar from "@/components/game/PixelAvatar";
@@ -102,22 +103,6 @@ export default function PlayerPage() {
 
         setGameView(view);
         setLoginError("");
-
-        // If user already revealed and we haven't shown the animation yet, show it
-        if (
-          !hasShownRevealRef.current &&
-          view.currentPlayer?.hasRevealed &&
-          view.currentPlayer.assignedToName
-        ) {
-          hasShownRevealRef.current = true;
-          setRevealData({
-            name: view.currentPlayer.assignedToName,
-            avatarId: view.currentPlayer.assignedToAvatarId || "mystery",
-            alreadyRevealed: true,
-          });
-          setShowReveal(true);
-          setIsMusicPlaying(true);
-        }
       }
     } catch {
       console.error("Failed to fetch game view");
@@ -149,17 +134,6 @@ export default function PlayerPage() {
         setGameView(data.data);
         // Resume music when logging in
         setIsMusicPlaying(true);
-
-        // If user already revealed, show the reveal animation
-        if (data.data.currentPlayer.hasRevealed && data.data.currentPlayer.assignedToName) {
-          hasShownRevealRef.current = true;
-          setRevealData({
-            name: data.data.currentPlayer.assignedToName,
-            avatarId: data.data.currentPlayer.assignedToAvatarId || "mystery",
-            alreadyRevealed: true,
-          });
-          setShowReveal(true);
-        }
       } else {
         setLoginError("Name not found. Make sure you use the exact name the admin registered!");
       }
@@ -185,7 +159,7 @@ export default function PlayerPage() {
     setIsMusicPlaying(false);
   };
 
-  const handleAvatarClick = async () => {
+  const handleAvatarClick = async (targetId: string) => {
     if (!playerName || revealing) return;
 
     setRevealing(true);
@@ -196,7 +170,7 @@ export default function PlayerPage() {
       const res = await fetch("/api/reveal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ playerName }),
+        body: JSON.stringify({ playerName, targetId }),
       });
 
       const data = await res.json();
@@ -523,13 +497,19 @@ export default function PlayerPage() {
         {/* Avatar Grid - Full Width */}
         <div className="max-w-6xl mx-auto">
           <AvatarGrid
-            participants={gameView.participants}
+            availableParticipants={gameView.availableParticipants}
             onAvatarClick={handleAvatarClick}
             disabled={revealing}
             onHoverStart={handleOrnamentHoverStart}
             onHoverEnd={handleOrnamentHoverEnd}
           />
         </div>
+
+        {/* Chosen Avatars Sidebar */}
+        <ChosenAvatarsSidebar
+          chosenAvatars={gameView.chosenAvatars}
+          totalParticipants={gameView.totalParticipants}
+        />
 
         {/* Reveal Modal */}
         {revealData && (
@@ -538,6 +518,7 @@ export default function PlayerPage() {
             assignedToName={revealData.name}
             assignedToAvatarId={revealData.avatarId}
             onClose={handleCloseReveal}
+            onLogout={handleLogout}
             alreadyRevealed={revealData.alreadyRevealed}
           />
         )}

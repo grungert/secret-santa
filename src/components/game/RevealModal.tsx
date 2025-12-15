@@ -11,6 +11,7 @@ interface RevealModalProps {
   assignedToName: string;
   assignedToAvatarId: string;
   onClose: () => void;
+  onLogout?: () => void;
   alreadyRevealed?: boolean;
 }
 
@@ -42,6 +43,7 @@ export default function RevealModal({
   assignedToName,
   assignedToAvatarId,
   onClose,
+  onLogout,
   alreadyRevealed = false,
 }: RevealModalProps) {
   const [showVideo, setShowVideo] = useState(true);
@@ -237,10 +239,18 @@ export default function RevealModal({
 
         {/* Close button */}
         {animationStage >= 5 && (
-          <div className="pt-4">
+          <div className="pt-4 flex flex-col items-center gap-3">
             <PixelButton variant="neonCyan" size="lg" onClick={onClose}>
               Got it!
             </PixelButton>
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                className="text-sm text-gray-400 hover:text-gray-300 transition-colors"
+              >
+                Logout
+              </button>
+            )}
           </div>
         )}
       </div>
