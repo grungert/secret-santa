@@ -1,26 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-
 export default function LayeredBackground() {
-  const santaRef = useRef<HTMLImageElement>(null);
-
-  // Randomize Santa's flight duration each loop for more life
-  useEffect(() => {
-    const santa = santaRef.current;
-    if (!santa) return;
-
-    const handleAnimationIteration = () => {
-      const duration = 14 + Math.random() * 8; // 14-22 seconds
-      santa.style.animationDuration = `${duration}s`;
-    };
-
-    santa.addEventListener("animationiteration", handleAnimationIteration);
-    return () => {
-      santa.removeEventListener("animationiteration", handleAnimationIteration);
-    };
-  }, []);
-
   return (
     <>
       {/* Main background container */}
@@ -72,7 +52,6 @@ export default function LayeredBackground() {
 
         {/* Layer 5: Santa flying across - looping animation */}
         <img
-          ref={santaRef}
           src="/imgs/santa.png"
           alt=""
           className="absolute top-[8%] w-[28vw] max-w-[400px] animate-santa-fly"
