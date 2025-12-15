@@ -187,11 +187,19 @@ export default function PlayerPage() {
   };
 
   const handleCloseReveal = () => {
+    console.log("handleCloseReveal called");
     setShowReveal(false);
     setRevealData(null); // Reset to unmount modal completely - ensures fresh video state next time
     setSantaExpression("naughty");
-    // Now update game view to show the "already revealed" static card
-    fetchGameView();
+    // Stop music immediately using global function before unmounting
+    console.log("window.stopSecretSantaMusic exists:", typeof window !== "undefined" && !!window.stopSecretSantaMusic);
+    if (typeof window !== "undefined" && window.stopSecretSantaMusic) {
+      console.log("Calling window.stopSecretSantaMusic()");
+      window.stopSecretSantaMusic();
+    }
+    setIsMusicPlaying(false);
+    // Redirect to intro screen
+    setShowStartScreen(true);
   };
 
   // Santa expression handlers for ornament hover
@@ -211,7 +219,7 @@ export default function PlayerPage() {
     setShowStartScreen(false);
   };
 
-  // Start screen - shows full background with START button
+  // Start screen - shows full background with START button (2D layered background from layout)
   if (showStartScreen) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-start pt-[15vh] p-4 relative">

@@ -29,6 +29,17 @@ interface ThreeBackgroundProps {
   musicEnabled?: boolean;
 }
 
+// Global reference to stop music from anywhere
+declare global {
+  interface Window {
+    stopSecretSantaMusic?: () => void;
+  }
+}
+
+// Store audio ref globally so it persists across component instances
+let globalAudioRef: THREE.Audio | null = null;
+let globalListenerRef: THREE.AudioListener | null = null;
+
 export default function ThreeBackground({
   musicUrl = "/sounds/christmas-music.mp3",
   autoPlay = true,
@@ -43,6 +54,32 @@ export default function ThreeBackground({
   const analyserRef = useRef<THREE.AudioAnalyser | null>(null);
   const audioLoadedRef = useRef(false);
   const musicEnabledRef = useRef(musicEnabled);
+
+  // Expose global stop function - use module-level ref for reliability
+  useEffect(() => {
+    window.stopSecretSantaMusic = () => {
+      console.log("stopSecretSantaMusic called");
+
+      // Suspend the AudioContext - this definitely stops all audio
+      if (globalListenerRef) {
+        const context = globalListenerRef.context;
+        console.log("AudioContext state:", context.state);
+        if (context.state === "running") {
+          context.suspend().then(() => {
+            console.log("AudioContext suspended");
+          });
+        }
+      }
+
+      // Also try stopping the audio directly
+      if (globalAudioRef && globalAudioRef.isPlaying) {
+        globalAudioRef.pause();
+        globalAudioRef.disconnect();
+        console.log("globalAudioRef paused and disconnected");
+      }
+    };
+    console.log("stopSecretSantaMusic function registered on window");
+  }, []);
   const uniformsRef = useRef({
     time: { value: 0.0 },
     step: { value: 0.0 },
@@ -310,8 +347,10 @@ export default function ThreeBackground({
 
     // Setup audio
     const listener = new THREE.AudioListener();
+    globalListenerRef = listener; // Store globally for AudioContext access
     const audio = new THREE.Audio(listener);
     audioRef.current = audio;
+    globalAudioRef = audio; // Store globally for reliable access
 
     // Setup scene
     const scene = new THREE.Scene();
