@@ -25,22 +25,22 @@ export default function LoginForm({ onLogin, error, loading }: LoginFormProps) {
     <PixelCard variant="highlight" className="max-w-md mx-auto">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="text-center">
-          <h2 className="text-3xl text-gold mb-2">Welcome!</h2>
+          <h2 className="text-3xl text-gold mb-2">Dobrodošli!</h2>
           <p className="text-lg text-frost-blue">
-            Enter your name to join the Secret Santa game
+            Unesi svoje ime da se pridružiš igri Tajni Deda Mraz
           </p>
         </div>
 
         <div className="space-y-2">
           <label htmlFor="name" className="block text-lg text-snow-white">
-            Your First Name:
+            Tvoje ime:
           </label>
           <PixelInput
             id="name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your name..."
+            placeholder="Unesi svoje ime..."
             className="w-full"
             error={!!error}
             autoFocus
@@ -57,11 +57,11 @@ export default function LoginForm({ onLogin, error, loading }: LoginFormProps) {
           className="w-full"
           disabled={name.trim().length < 2 || loading}
         >
-          {loading ? "Checking..." : "Enter Game"}
+          {loading ? "Provera..." : "Uđi u igru"}
         </PixelButton>
 
         <p className="text-sm text-gray-400 text-center">
-          Make sure you use the exact name the admin registered for you!
+          Koristi tačno ime koje je admin registrovao za tebe!
         </p>
       </form>
     </PixelCard>

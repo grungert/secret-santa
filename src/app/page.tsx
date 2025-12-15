@@ -35,6 +35,32 @@ const GALLERY_VIDEOS = [
   { name: "Video 7", src: "/imgs/video7.mp4" },
 ];
 
+// Serbian translations
+const T = {
+  secretSanta: "TAJNI DEDA MRAZ",
+  newYear: "✦ Nova Godina 2026 ✦",
+  start: "▶ KRENI",
+  loading: "Učitavanje...",
+  adminPanel: "Admin Panel →",
+  playGame: "🎄 IGRAJ IGRU",
+  welcome: "Dobrodošao/la",
+  gameNotStarted: "Igra još nije počela. Sačekaj da admin sve podesi!",
+  autoUpdate: "Ova stranica će se automatski ažurirati kada igra počne.",
+  logout: "Odjava",
+  is: "je",
+  seeMyChoice: "🎁 Pogledaj moj izbor",
+  videos: "🎬 Video snimci",
+  pickOne: "Izaberi!",
+  nice: "Ooo da li je to tvoj izbor? 👍",
+  perfect: "🎁 Savršeno! 🎁",
+  backToList: "← Nazad na listu",
+  close: "Zatvori",
+  nameNotFound: "Ime nije pronađeno. Proveri sa adminom!",
+  nameNotFoundLogin: "Ime nije pronađeno. Koristi tačno ime koje je admin registrovao!",
+  connectionFailed: "Neuspešno povezivanje. Pokušaj ponovo.",
+  revealFailed: "Neuspešno otkrivanje",
+};
+
 export default function PlayerPage() {
   const [showStartScreen, setShowStartScreen] = useState(true);
   const [playerName, setPlayerName] = useState<string | null>(null);
@@ -110,7 +136,7 @@ export default function PlayerPage() {
 
         // Check if player exists in game
         if (!view.currentPlayer) {
-          setLoginError("Name not found in game. Check with the admin!");
+          setLoginError(T.nameNotFound);
           setPlayerName(null);
           localStorage.removeItem(STORAGE_KEY);
           return;
@@ -150,10 +176,10 @@ export default function PlayerPage() {
         // Resume music when logging in
         setIsMusicPlaying(true);
       } else {
-        setLoginError("Name not found. Make sure you use the exact name the admin registered!");
+        setLoginError(T.nameNotFoundLogin);
       }
     } catch {
-      setLoginError("Failed to connect. Please try again.");
+      setLoginError(T.connectionFailed);
     } finally {
       setLoading(false);
     }
@@ -221,11 +247,11 @@ export default function PlayerPage() {
         }, 3000);
       } else {
         setSantaExpression("naughty");
-        alert(data.error || "Failed to reveal");
+        alert(data.error || T.revealFailed);
       }
     } catch {
       setSantaExpression("naughty");
-      alert("Failed to connect. Please try again.");
+      alert(T.connectionFailed);
     } finally {
       setRevealing(false);
     }
@@ -295,7 +321,7 @@ export default function PlayerPage() {
           href="/admin"
           className="absolute bottom-4 right-4 text-sm text-gray-500 hover:text-neon-cyan transition-colors z-10"
         >
-          Admin Panel →
+          {T.adminPanel}
         </a>
 
         {/* Play Game button in bottom left */}
@@ -305,19 +331,19 @@ export default function PlayerPage() {
           size="sm"
           className="absolute bottom-4 left-4 text-sm z-10"
         >
-          🎄 PLAY GAME
+          {T.playGame}
         </PixelButton>
 
         <div className="text-center relative z-10">
           <GlitchText
-            text="SECRET SANTA"
+            text={T.secretSanta}
             as="h1"
             className="text-5xl md:text-7xl neon-text-pink mb-4"
             glitchIntensity="medium"
             continuous
           />
           <p className="text-2xl mb-12 animate-rainbow-neon tracking-widest">
-            ✦ New Year 2026 ✦
+            {T.newYear}
           </p>
 
           <PixelButton
@@ -326,7 +352,7 @@ export default function PlayerPage() {
             size="lg"
             className="text-3xl px-14 py-4"
           >
-            ▶ START
+            {T.start}
           </PixelButton>
         </div>
       </main>
@@ -339,7 +365,7 @@ export default function PlayerPage() {
       <div className="min-h-screen flex items-center justify-center relative z-10">
         <div className="text-center">
           <div className="text-6xl animate-pixel-bounce mb-4">🎅</div>
-          <p className="text-2xl neon-text-pink animate-pulse">Loading...</p>
+          <p className="text-2xl neon-text-pink animate-pulse">{T.loading}</p>
         </div>
       </div>
     );
@@ -351,13 +377,13 @@ export default function PlayerPage() {
       <main className="min-h-screen flex flex-col items-center justify-center p-4 relative z-10">
         <div className="text-center mb-8">
           <GlitchText
-            text="SECRET SANTA"
+            text={T.secretSanta}
             as="h1"
             className="text-4xl md:text-6xl neon-text-pink mb-2"
             glitchIntensity="medium"
             continuous
           />
-          <p className="text-xl neon-text-cyan animate-pulse">New Year 2026</p>
+          <p className="text-xl neon-text-cyan animate-pulse">Nova Godina 2026</p>
         </div>
 
         <LoginForm onLogin={handleLogin} error={loginError} loading={loading} />
@@ -367,7 +393,7 @@ export default function PlayerPage() {
             href="/admin"
             className="text-sm text-gray-400 hover:text-neon-cyan transition-colors"
           >
-            Admin Panel →
+            {T.adminPanel}
           </a>
         </div>
       </main>
@@ -387,25 +413,25 @@ export default function PlayerPage() {
         <main className="min-h-screen flex flex-col items-center justify-center p-4 relative z-10">
           <div className="text-center mb-8">
             <GlitchText
-              text="SECRET SANTA"
+              text={T.secretSanta}
               as="h1"
               className="text-4xl md:text-6xl neon-text-pink mb-2"
               glitchIntensity="medium"
               continuous
             />
-            <p className="text-xl neon-text-cyan animate-pulse">New Year 2026</p>
+            <p className="text-xl neon-text-cyan animate-pulse">Nova Godina 2026</p>
           </div>
 
           <PixelCard variant="highlight" className="max-w-md text-center">
             <div className="text-4xl animate-pixel-float mb-4">⏳</div>
             <h2 className="text-2xl neon-text-yellow mb-2">
-              Welcome, {gameView?.currentPlayer?.name || playerName}!
+              {T.welcome}, {gameView?.currentPlayer?.name || playerName}!
             </h2>
             <p className="text-neon-cyan mb-4">
-              The game hasn&apos;t started yet. Wait for the admin to set everything up!
+              {T.gameNotStarted}
             </p>
             <p className="text-sm text-gray-400">
-              This page will automatically update when the game starts.
+              {T.autoUpdate}
             </p>
           </PixelCard>
 
@@ -413,7 +439,7 @@ export default function PlayerPage() {
             onClick={handleLogout}
             className="mt-4 text-sm text-gray-400 hover:text-neon-cyan transition-colors"
           >
-            Logout
+            {T.logout}
           </button>
         </main>
       </>
@@ -434,13 +460,13 @@ export default function PlayerPage() {
         <div className="text-center mb-4 md:mb-6">
           <div className="flex items-center justify-center gap-3 mb-2">
             <GlitchText
-              text="SECRET SANTA"
+              text={T.secretSanta}
               as="h1"
               className="text-3xl md:text-5xl lg:text-6xl neon-text-pink"
               glitchIntensity="medium"
               continuous
             />
-            <span className="text-2xl md:text-4xl lg:text-5xl neon-text-cyan">is</span>
+            <span className="text-2xl md:text-4xl lg:text-5xl neon-text-cyan">{T.is}</span>
             <span className="text-3xl md:text-5xl lg:text-6xl neon-text-yellow font-bold uppercase">
               {gameView.currentPlayer?.name || playerName}
             </span>
@@ -472,7 +498,7 @@ export default function PlayerPage() {
                   boxShadow: "0 0 15px rgba(255, 0, 255, 0.3)",
                 }}
               >
-                🎁 See My Choice
+                {T.seeMyChoice}
               </button>
             )}
 
@@ -485,7 +511,7 @@ export default function PlayerPage() {
                 boxShadow: "0 0 15px rgba(0, 255, 255, 0.3)",
               }}
             >
-              🎬 Videos
+              {T.videos}
             </button>
           </div>
         </div>
@@ -503,9 +529,9 @@ export default function PlayerPage() {
               boxShadow: "0 0 10px var(--neon-yellow-glow)",
             }}
           >
-            {santaExpression === "naughty" && "Pick one!"}
-            {santaExpression === "nice" && "Nice! 👍"}
-            {santaExpression === "super-nice" && "★ Perfect! ★"}
+            {santaExpression === "naughty" && T.pickOne}
+            {santaExpression === "nice" && T.nice}
+            {santaExpression === "super-nice" && T.perfect}
           </div>
         </div>
 
@@ -570,7 +596,7 @@ export default function PlayerPage() {
                     textShadow: "0 0 10px var(--neon-cyan)",
                   }}
                 >
-                  ← Back to list
+                  {T.backToList}
                 </button>
               </div>
             ) : (
@@ -582,7 +608,7 @@ export default function PlayerPage() {
                 }}
               >
                 <h3 className="text-2xl neon-text-cyan text-center mb-6">
-                  🎬 Videos
+                  {T.videos}
                 </h3>
                 <div className="flex flex-col gap-3">
                   {GALLERY_VIDEOS.map((video) => (
@@ -602,7 +628,7 @@ export default function PlayerPage() {
                   onClick={() => setShowVideoGallery(false)}
                   className="mt-6 w-full px-6 py-2 rounded-full border border-gray-500 text-gray-400 hover:text-white hover:border-white transition-all"
                 >
-                  Close
+                  {T.close}
                 </button>
               </div>
             )}

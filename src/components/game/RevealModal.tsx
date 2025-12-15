@@ -167,7 +167,7 @@ export default function RevealModal({
           {/* Loading indicator */}
           {videoLoading && (
             <div className="absolute inset-0 flex items-center justify-center z-10">
-              <div className="text-white text-xl animate-pulse">Loading video...</div>
+              <div className="text-white text-xl animate-pulse">Učitavanje videa...</div>
             </div>
           )}
           <video
@@ -188,7 +188,7 @@ export default function RevealModal({
             onClick={handleSkipVideo}
             className="absolute bottom-8 right-8 px-4 py-2 bg-black/50 rounded text-white/80 hover:text-white hover:bg-black/70 text-sm transition-all z-20"
           >
-            Skip →
+            Preskoči →
           </button>
         </div>
       )}
@@ -226,8 +226,8 @@ export default function RevealModal({
           <div className="space-y-2">
             <p className="text-2xl neon-text-cyan animate-pulse">
               {alreadyRevealed
-                ? "Your Secret Santa assignment:"
-                : "You will buy a gift for..."}
+                ? "Tvoj Tajni Deda Mraz izbor:"
+                : "Kupićeš poklon za..."}
             </p>
           </div>
         )}
@@ -250,7 +250,7 @@ export default function RevealModal({
         {/* Neon festive message */}
         {animationStage >= 4 && (
           <p className="text-xl animate-rainbow-neon">
-            ★ AWESOME ★
+            ★ ODLIČNO ★
           </p>
         )}
 
@@ -258,14 +258,14 @@ export default function RevealModal({
         {animationStage >= 5 && (
           <div className="pt-4 flex flex-col items-center gap-3">
             <PixelButton variant="neonCyan" size="lg" onClick={onClose}>
-              Got it!
+              Važi!
             </PixelButton>
             {onLogout && (
               <button
                 onClick={onLogout}
                 className="text-sm text-gray-400 hover:text-gray-300 transition-colors"
               >
-                Logout
+                Odjava
               </button>
             )}
           </div>

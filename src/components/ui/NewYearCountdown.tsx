@@ -47,9 +47,9 @@ export default function NewYearCountdown({
 
   return (
     <span className={className}>
-      New Year in{" "}
+      Nova Godina za{" "}
       <span className="neon-text-yellow">
-        {timeLeft.days} {timeLeft.days === 1 ? "day" : "days"}
+        {timeLeft.days} {timeLeft.days === 1 ? "dan" : "dana"}
       </span>{" "}
       <span className="neon-text-cyan">
         {pad(timeLeft.hours)}:{pad(timeLeft.minutes)}:{pad(timeLeft.seconds)}

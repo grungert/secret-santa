@@ -48,7 +48,7 @@ export default function NeonStatBar({
         {/* Center - Progress bar */}
         <div className="flex-1 flex items-center gap-3">
           <span className="text-sm neon-text-green whitespace-nowrap">
-            {revealedCount}/{totalParticipants} revealed
+            {revealedCount}/{totalParticipants} otkriveno
           </span>
           <div className="flex-1 h-3 bg-black/60 rounded-full overflow-hidden border border-neon-green/50">
             <div
@@ -65,9 +65,9 @@ export default function NeonStatBar({
         {/* Right - Status & Logout */}
         <div className="flex items-center gap-4">
           {hasRevealed ? (
-            <span className="text-sm neon-text-green">✓ Revealed</span>
+            <span className="text-sm neon-text-green">✓ Otkriveno</span>
           ) : (
-            <span className="text-sm neon-text-yellow animate-pulse">Pick an ornament!</span>
+            <span className="text-sm neon-text-yellow animate-pulse">Izaberi ukras!</span>
           )}
           <button
             onClick={onLogout}
@@ -76,7 +76,7 @@ export default function NeonStatBar({
               textShadow: "0 0 8px var(--neon-pink)",
             }}
           >
-            Logout
+            Odjava
           </button>
         </div>
       </div>
