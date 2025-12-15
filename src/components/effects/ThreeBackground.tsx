@@ -33,12 +33,51 @@ interface ThreeBackgroundProps {
 declare global {
   interface Window {
     stopSecretSantaMusic?: () => void;
+    secretSantaAudio?: HTMLAudioElement;
   }
 }
 
-// Store audio ref globally so it persists across component instances
-let globalAudioRef: THREE.Audio | null = null;
-let globalListenerRef: THREE.AudioListener | null = null;
+// Single global HTML5 Audio element - persists across component mounts/unmounts
+let globalAudio: HTMLAudioElement | null = null;
+let globalAudioContext: AudioContext | null = null;
+let globalAnalyserNode: AnalyserNode | null = null;
+let globalSourceNode: MediaElementAudioSourceNode | null = null;
+
+function getGlobalAudio(musicUrl: string): HTMLAudioElement {
+  if (!globalAudio) {
+    globalAudio = new Audio(musicUrl);
+    globalAudio.loop = true;
+    globalAudio.volume = 0.5;
+    window.secretSantaAudio = globalAudio;
+  }
+  return globalAudio;
+}
+
+function getGlobalAnalyser(audio: HTMLAudioElement, fftSize: number): AnalyserNode | null {
+  if (!globalAudioContext) {
+    globalAudioContext = new AudioContext();
+  }
+  if (!globalSourceNode) {
+    globalSourceNode = globalAudioContext.createMediaElementSource(audio);
+  }
+  if (!globalAnalyserNode) {
+    globalAnalyserNode = globalAudioContext.createAnalyser();
+    globalAnalyserNode.fftSize = fftSize;
+    globalSourceNode.connect(globalAnalyserNode);
+    globalAnalyserNode.connect(globalAudioContext.destination);
+  }
+  return globalAnalyserNode;
+}
+
+// Global stop function - simple and reliable
+window.stopSecretSantaMusic = () => {
+  console.log("stopSecretSantaMusic called");
+  if (globalAudio) {
+    globalAudio.pause();
+    globalAudio.currentTime = 0;
+    console.log("Audio stopped and reset");
+  }
+};
 
 export default function ThreeBackground({
   musicUrl = "/sounds/christmas-music.mp3",
@@ -50,28 +89,8 @@ export default function ThreeBackground({
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const composerRef = useRef<EffectComposer | null>(null);
   const animationIdRef = useRef<number>(0);
-  const audioRef = useRef<THREE.Audio | null>(null);
-  const analyserRef = useRef<THREE.AudioAnalyser | null>(null);
-  const audioLoadedRef = useRef(false);
+  const analyserDataRef = useRef<Uint8Array | null>(null);
   const musicEnabledRef = useRef(musicEnabled);
-
-  // Expose global stop function - use module-level ref for reliability
-  useEffect(() => {
-    window.stopSecretSantaMusic = () => {
-      // Suspend the AudioContext - this definitely stops all audio
-      if (globalListenerRef) {
-        const context = globalListenerRef.context;
-        if (context.state === "running") {
-          context.suspend();
-        }
-      }
-      // Also pause and disconnect the audio
-      if (globalAudioRef && globalAudioRef.isPlaying) {
-        globalAudioRef.pause();
-        globalAudioRef.disconnect();
-      }
-    };
-  }, []);
   const uniformsRef = useRef({
     time: { value: 0.0 },
     step: { value: 0.0 },
@@ -337,12 +356,8 @@ export default function ThreeBackground({
 
     const container = containerRef.current;
 
-    // Setup audio
-    const listener = new THREE.AudioListener();
-    globalListenerRef = listener; // Store globally for AudioContext access
-    const audio = new THREE.Audio(listener);
-    audioRef.current = audio;
-    globalAudioRef = audio; // Store globally for reliable access
+    // Setup global HTML5 audio (persists across mounts)
+    const audio = getGlobalAudio(musicUrl);
 
     // Setup scene
     const scene = new THREE.Scene();
@@ -362,12 +377,29 @@ export default function ThreeBackground({
     );
     camera.position.set(-0.09397456774197047, -2.5597086635726947, 24.420789670889008);
     camera.rotation.set(0.10443543723052419, -0.003827152981119352, 0.0004011488708739715);
-    camera.add(listener);
 
     // Create empty audio data texture initially
     const emptyData = new Uint8Array(fftSize / 2);
     const format = THREE.RedFormat;
     uniformsRef.current.tAudioData.value = new THREE.DataTexture(emptyData, fftSize / 2, 1, format);
+
+    // Setup Web Audio API analyser for visualization (reuse global)
+    let analyser: AnalyserNode | null = null;
+    try {
+      analyser = getGlobalAnalyser(audio, fftSize);
+      if (analyser) {
+        analyserDataRef.current = new Uint8Array(analyser.frequencyBinCount);
+        // Update texture with analyser data
+        uniformsRef.current.tAudioData.value = new THREE.DataTexture(
+          analyserDataRef.current,
+          fftSize / 2,
+          1,
+          format
+        );
+      }
+    } catch (e) {
+      console.log("Could not setup audio analyser:", e);
+    }
 
     // Add scene elements
     addPlane(scene, uniformsRef.current, 3000);
@@ -395,52 +427,28 @@ export default function ThreeBackground({
     composer.addPass(bloomPass);
     composerRef.current = composer;
 
-    // Load and play audio
-    if (musicUrl) {
-      const loader = new THREE.AudioLoader();
-      loader.load(musicUrl, (buffer) => {
-        audio.setBuffer(buffer);
-        audio.setLoop(true);
-        audio.setVolume(0.5);
-        audioLoadedRef.current = true;
-
-        // Set up analyser first
-        const analyser = new THREE.AudioAnalyser(audio, fftSize);
-        analyserRef.current = analyser;
-
-        // Update texture with analyser data
-        uniformsRef.current.tAudioData.value = new THREE.DataTexture(
-          analyser.data,
-          fftSize / 2,
-          1,
-          format
-        );
-
-        // Only play if musicEnabled is true
-        if (autoPlay && musicEnabledRef.current) {
-          // Try to play audio - handle autoplay restrictions
-          const playPromise = audio.play();
-          if (playPromise !== undefined) {
-            Promise.resolve(playPromise).catch((error) => {
-              console.log("Audio autoplay blocked, waiting for user interaction:", error);
-              // Set up click handler to start audio on first user interaction
-              const startAudio = () => {
-                if (musicEnabledRef.current && !audio.isPlaying) {
-                  audio.play();
-                }
-                document.removeEventListener("click", startAudio);
-              };
-              document.addEventListener("click", startAudio);
-            });
-          }
-        }
-      });
+    // Play audio if enabled (handles autoplay restrictions)
+    if (autoPlay && musicEnabledRef.current && audio.paused) {
+      const playPromise = audio.play();
+      if (playPromise) {
+        playPromise.catch((error) => {
+          console.log("Audio autoplay blocked, waiting for user interaction:", error);
+          const startAudio = () => {
+            if (musicEnabledRef.current && audio.paused) {
+              audio.play();
+            }
+            document.removeEventListener("click", startAudio);
+          };
+          document.addEventListener("click", startAudio);
+        });
+      }
     }
 
     // Animation loop
     const animate = (time: number) => {
-      if (analyserRef.current) {
-        analyserRef.current.getFrequencyData();
+      // Update audio visualization data
+      if (analyser && analyserDataRef.current) {
+        analyser.getByteFrequencyData(analyserDataRef.current as Uint8Array<ArrayBuffer>);
         if (uniformsRef.current.tAudioData.value) {
           uniformsRef.current.tAudioData.value.needsUpdate = true;
         }
@@ -467,17 +475,10 @@ export default function ThreeBackground({
     };
     window.addEventListener("resize", handleResize);
 
-    // Cleanup
+    // Cleanup - only cleanup THREE.js resources, NOT the global audio
     return () => {
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationIdRef.current);
-
-      if (audioRef.current) {
-        if (audioRef.current.isPlaying) {
-          audioRef.current.pause();
-        }
-        audioRef.current.disconnect();
-      }
 
       if (rendererRef.current) {
         rendererRef.current.dispose();
@@ -494,12 +495,16 @@ export default function ThreeBackground({
   useEffect(() => {
     musicEnabledRef.current = musicEnabled;
 
-    if (!audioRef.current || !audioLoadedRef.current) return;
-
-    if (musicEnabled && !audioRef.current.isPlaying) {
-      audioRef.current.play();
-    } else if (!musicEnabled && audioRef.current.isPlaying) {
-      audioRef.current.pause();
+    if (globalAudio) {
+      if (musicEnabled) {
+        // Play audio if paused
+        if (globalAudio.paused) {
+          globalAudio.play().catch(() => {});
+        }
+      } else {
+        // Pause audio
+        globalAudio.pause();
+      }
     }
   }, [musicEnabled]);
 

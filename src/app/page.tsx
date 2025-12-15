@@ -128,6 +128,8 @@ export default function PlayerPage() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ name }));
         setPlayerName(name);
         setGameView(data.data);
+        // Resume music when logging in
+        setIsMusicPlaying(true);
       } else {
         setLoginError("Name not found. Make sure you use the exact name the admin registered!");
       }
@@ -139,9 +141,16 @@ export default function PlayerPage() {
   };
 
   const handleLogout = () => {
+    console.log("handleLogout called");
     localStorage.removeItem(STORAGE_KEY);
     setPlayerName(null);
     setGameView(null);
+    // Stop music using global function
+    console.log("window.stopSecretSantaMusic exists:", !!window.stopSecretSantaMusic);
+    if (typeof window !== "undefined" && window.stopSecretSantaMusic) {
+      console.log("Calling stopSecretSantaMusic");
+      window.stopSecretSantaMusic();
+    }
     setIsMusicPlaying(false);
   };
 
