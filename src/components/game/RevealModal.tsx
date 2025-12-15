@@ -119,15 +119,28 @@ export default function RevealModal({
         isOpen ? "opacity-100" : "opacity-0"
       )}
     >
-      {/* Backdrop with neon gradient - more transparent to show 3D background */}
+      {/* Backdrop */}
       <div
-        className="absolute inset-0 backdrop-blur-sm"
+        className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse at center, rgba(26, 10, 46, 0.7) 0%, rgba(10, 10, 15, 0.75) 100%)",
+            "radial-gradient(ellipse at center, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.7) 100%)",
         }}
         onClick={animationStage >= 5 ? onClose : undefined}
       />
+
+      {/* X Close button */}
+      {animationStage >= 3 && (
+        <button
+          onClick={onClose}
+          className="absolute top-6 right-6 z-50 w-12 h-12 flex items-center justify-center rounded-full bg-black/50 hover:bg-black/70 transition-all group"
+          style={{
+            boxShadow: '0 0 20px rgba(255, 0, 255, 0.5)',
+          }}
+        >
+          <span className="text-2xl text-white/80 group-hover:text-white font-bold">✕</span>
+        </button>
+      )}
 
       {/* Video overlay - shows before reveal */}
       {showVideo && (
