@@ -179,41 +179,12 @@ export default function RevealModal({
             animationStage >= 1 && "animate-reveal-zoom"
           )}
         >
-          {/* Neon glow ring effect - positioned around avatar */}
-          {animationStage >= 2 && (
-            <div
-              className="absolute inset-0 flex items-center justify-center pointer-events-none"
-              style={{ transform: "scale(2)" }}
-            >
-              <div
-                className="w-full h-full rounded-full animate-neon-pulse"
-                style={{
-                  background:
-                    "radial-gradient(circle, transparent 30%, var(--neon-pink-glow) 50%, transparent 70%)",
-                }}
-              />
-            </div>
-          )}
-
           <div className="relative">
-            {/* Multi-color neon glow behind avatar */}
+            {/* Avatar container with neon border and glow - circular */}
             <div
-              className="absolute inset-0 blur-2xl rounded-full scale-150 animate-rainbow-neon"
-              style={{ opacity: 0.4 }}
-            />
-
-            {/* Avatar container with neon border */}
-            <div
-              className="relative bg-black/80 p-4 border-4 border-neon-pink backdrop-blur-sm"
-              style={{
-                boxShadow: `
-                  0 0 20px var(--neon-pink),
-                  0 0 40px var(--neon-pink-glow),
-                  inset 0 0 20px var(--neon-pink-glow)
-                `,
-              }}
+              className="relative bg-black/80 p-6 backdrop-blur-sm rounded-full animate-combined-glow"
             >
-              <PixelAvatar avatarId={assignedToAvatarId} size="lg" />
+              <PixelAvatar avatarId={assignedToAvatarId} size="md" />
             </div>
           </div>
         </div>
