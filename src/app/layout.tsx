@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { VT323 } from "next/font/google";
+import { VT323, Neonderthaw, Tilt_Neon } from "next/font/google";
 import "./globals.css";
 import LayeredBackground from "@/components/effects/LayeredBackground";
 import SnowEffect from "@/components/effects/SnowEffect";
@@ -10,6 +10,18 @@ const pixelFont = VT323({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-pixel",
+});
+
+const neonderthawFont = Neonderthaw({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-neonderthaw",
+});
+
+const tiltNeonFont = Tilt_Neon({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-tilt-neon",
 });
 
 export const metadata: Metadata = {
@@ -24,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${pixelFont.variable} font-pixel antialiased`}>
+      <body className={`${pixelFont.variable} ${neonderthawFont.variable} ${tiltNeonFont.variable} font-pixel antialiased`}>
         {/* Layered pixel art background */}
         <LayeredBackground />
 

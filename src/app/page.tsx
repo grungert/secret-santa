@@ -5,11 +5,13 @@ import dynamic from "next/dynamic";
 import LoginForm from "@/components/game/LoginForm";
 import AvatarGrid from "@/components/game/AvatarGrid";
 import RevealModal from "@/components/game/RevealModal";
-import GameSidebar from "@/components/game/GameSidebar";
 import PixelCard from "@/components/ui/PixelCard";
 import PixelAvatar from "@/components/game/PixelAvatar";
 import GlitchText from "@/components/effects/GlitchText";
 import PixelButton from "@/components/ui/PixelButton";
+import FloatingNames from "@/components/effects/FloatingNames";
+import NewYearCountdown from "@/components/ui/NewYearCountdown";
+import NeonStatBar from "@/components/ui/NeonStatBar";
 import { PlayerGameView } from "@/types";
 import SantaFace, { SantaExpression } from "@/components/game/SantaFace";
 
@@ -39,6 +41,28 @@ export default function PlayerPage() {
 
   // Santa expression state
   const [santaExpression, setSantaExpression] = useState<SantaExpression>("naughty");
+
+  // Music state
+  const [isMusicPlaying, setIsMusicPlaying] = useState(true);
+
+  // Intro screen floating names
+  const [introNames, setIntroNames] = useState<string[]>([]);
+
+  // Fetch participant names for intro screen
+  useEffect(() => {
+    const fetchIntroNames = async () => {
+      try {
+        const res = await fetch("/api/game?publicNames=true");
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data)) {
+          setIntroNames(data.data);
+        }
+      } catch {
+        // Silently fail - names are decorative
+      }
+    };
+    fetchIntroNames();
+  }, []);
 
   // Load saved player name from localStorage
   useEffect(() => {
@@ -118,6 +142,7 @@ export default function PlayerPage() {
     localStorage.removeItem(STORAGE_KEY);
     setPlayerName(null);
     setGameView(null);
+    setIsMusicPlaying(false);
   };
 
   const handleAvatarClick = async () => {
@@ -187,15 +212,18 @@ export default function PlayerPage() {
   if (showStartScreen) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-start pt-[15vh] p-4 relative">
+        {/* Floating participant names */}
+        <FloatingNames names={introNames} />
+
         {/* Admin link in bottom right */}
         <a
           href="/admin"
-          className="absolute bottom-4 right-4 text-sm text-gray-500 hover:text-neon-cyan transition-colors"
+          className="absolute bottom-4 right-4 text-sm text-gray-500 hover:text-neon-cyan transition-colors z-10"
         >
           Admin Panel →
         </a>
 
-        <div className="text-center">
+        <div className="text-center relative z-10">
           <GlitchText
             text="SECRET SANTA"
             as="h1"
@@ -265,7 +293,8 @@ export default function PlayerPage() {
   if (!gameView || gameView.status === "setup") {
     return (
       <>
-        <ThreeBackground />
+        <ThreeBackground musicEnabled={isMusicPlaying} />
+        <FloatingNames names={introNames} />
         {/* Hide 2D background with CSS */}
         <style jsx global>{`
           .layered-bg, .snow-effect { display: none !important; }
@@ -310,7 +339,8 @@ export default function PlayerPage() {
   if (gameView.currentPlayer?.hasRevealed && gameView.currentPlayer.assignedToName) {
     return (
       <>
-        <ThreeBackground />
+        <ThreeBackground musicEnabled={isMusicPlaying} />
+        <FloatingNames names={introNames} />
         {/* Hide 2D background with CSS */}
         <style jsx global>{`
           .layered-bg, .snow-effect { display: none !important; }
@@ -370,62 +400,75 @@ export default function PlayerPage() {
     );
   }
 
-  // Active game - show avatar grid with sidebar
+  // Active game - show avatar grid (no sidebar)
   return (
     <>
-      <ThreeBackground />
+      <ThreeBackground musicEnabled={isMusicPlaying} />
+      <FloatingNames names={introNames} />
       {/* Hide 2D background with CSS */}
       <style jsx global>{`
         .layered-bg, .snow-effect { display: none !important; }
       `}</style>
       <main className="min-h-screen p-4 md:p-6 lg:p-8 relative z-10">
-        {/* Header - Full Width with Santa below */}
-        <div className="text-center mb-6 md:mb-8">
-          <GlitchText
-            text="SECRET SANTA"
-            as="h1"
-            className="text-3xl md:text-5xl lg:text-6xl neon-text-pink mb-2"
-            glitchIntensity="medium"
-            continuous
-          />
-          <p className="text-lg md:text-xl neon-text-cyan animate-pulse mb-4">New Year 2026</p>
+        {/* Header - Title with player name */}
+        <div className="text-center mb-4 md:mb-6">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <GlitchText
+              text="SECRET SANTA"
+              as="h1"
+              className="text-3xl md:text-5xl lg:text-6xl neon-text-pink"
+              glitchIntensity="medium"
+              continuous
+            />
+            <span className="text-2xl md:text-4xl lg:text-5xl neon-text-cyan">is</span>
+            <span className="text-3xl md:text-5xl lg:text-6xl neon-text-yellow font-bold uppercase">
+              {gameView.currentPlayer?.name || playerName}
+            </span>
+          </div>
 
-          {/* Santa Face - Below titles */}
-          <div className="flex flex-col items-center">
-            <p className="text-sm neon-text-yellow mb-1">
-              {santaExpression === "naughty" && "Hmm... who will you pick?"}
-              {santaExpression === "nice" && "Ooh, good choice!"}
-              {santaExpression === "super-nice" && "★ Perfect match! ★"}
-            </p>
-            <SantaFace expression={santaExpression} />
+          {/* Countdown */}
+          <p className="text-lg md:text-xl mb-4">
+            <NewYearCountdown targetYear={2026} />
+          </p>
+
+          {/* Neon Stat Bar */}
+          <NeonStatBar
+            playerAvatarId={gameView.currentPlayer?.avatarId || "mystery"}
+            revealedCount={gameView.revealedCount}
+            totalParticipants={gameView.totalParticipants}
+            hasRevealed={gameView.currentPlayer?.hasRevealed || false}
+            onLogout={handleLogout}
+          />
+        </div>
+
+        {/* Santa Face - Fixed Top Right */}
+        <div className="fixed top-6 right-6 z-20 flex flex-col items-center">
+          <SantaFace expression={santaExpression} />
+          <div
+            className="text-sm text-center mt-4 px-3 py-1 rounded-full"
+            style={{
+              background: "rgba(0,0,0,0.8)",
+              color: "var(--neon-yellow)",
+              textShadow: "0 0 10px var(--neon-yellow)",
+              border: "1px solid var(--neon-yellow)",
+              boxShadow: "0 0 10px var(--neon-yellow-glow)",
+            }}
+          >
+            {santaExpression === "naughty" && "Pick one!"}
+            {santaExpression === "nice" && "Nice! 👍"}
+            {santaExpression === "super-nice" && "★ Perfect! ★"}
           </div>
         </div>
 
-        {/* Main Content - Sidebar + Grid Layout */}
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row gap-6 lg:gap-8">
-            {/* Left Sidebar */}
-            <GameSidebar
-              playerName={gameView.currentPlayer?.name || playerName}
-              playerAvatarId={gameView.currentPlayer?.avatarId || "mystery"}
-              revealedCount={gameView.revealedCount}
-              totalParticipants={gameView.totalParticipants}
-              hasRevealed={gameView.currentPlayer?.hasRevealed || false}
-              onLogout={handleLogout}
-              santaExpression={santaExpression}
-            />
-
-            {/* Right - Avatar Grid */}
-            <div className="flex-1">
-              <AvatarGrid
-                participants={gameView.participants}
-                onAvatarClick={handleAvatarClick}
-                disabled={revealing}
-                onHoverStart={handleOrnamentHoverStart}
-                onHoverEnd={handleOrnamentHoverEnd}
-              />
-            </div>
-          </div>
+        {/* Avatar Grid - Full Width */}
+        <div className="max-w-6xl mx-auto">
+          <AvatarGrid
+            participants={gameView.participants}
+            onAvatarClick={handleAvatarClick}
+            disabled={revealing}
+            onHoverStart={handleOrnamentHoverStart}
+            onHoverEnd={handleOrnamentHoverEnd}
+          />
         </div>
 
         {/* Reveal Modal */}

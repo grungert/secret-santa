@@ -239,6 +239,191 @@ body {
   }
 }
 
+/* ========================================
+   FLOATING NAMES ANIMATIONS
+   ======================================== */
+@keyframes float-name-up {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-110vh);
+    opacity: 0;
+  }
+}
+
+@keyframes neon-color-shift {
+  0%, 100% {
+    color: var(--neon-pink);
+    text-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink-glow);
+  }
+  25% {
+    color: var(--neon-cyan);
+    text-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan-glow);
+  }
+  50% {
+    color: var(--neon-green);
+    text-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green), 0 0 20px var(--neon-green-glow);
+  }
+  75% {
+    color: var(--neon-yellow);
+    text-shadow: 0 0 5px var(--neon-yellow), 0 0 10px var(--neon-yellow), 0 0 20px var(--neon-yellow-glow);
+  }
+}
+
+@keyframes neon-flicker-text {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    opacity: 1;
+  }
+  20%, 24%, 55% {
+    opacity: 0.6;
+  }
+  21%, 54% {
+    opacity: 0.9;
+  }
+}
+
+.animate-float-name-up {
+  animation: float-name-up linear infinite;
+}
+
+.animate-neon-color-shift {
+  animation: neon-color-shift 6s ease-in-out infinite;
+}
+
+.animate-neon-flicker-text {
+  animation: neon-flicker-text 4s linear infinite;
+}
+
+/* ========================================
+   FLOATING NAMES - FONTS
+   ======================================== */
+.font-pixel {
+  font-family: var(--font-pixel), monospace;
+}
+
+.font-neonderthaw {
+  font-family: var(--font-neonderthaw), cursive;
+  font-size: 1.4em;
+  font-weight: 400;
+}
+
+.font-tilt-neon {
+  font-family: var(--font-tilt-neon), sans-serif;
+  font-size: 1.1em;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
+
+/* ========================================
+   FLOATING NAMES - GRADIENTS
+   ======================================== */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-pink-cyan {
+  background: linear-gradient(90deg, var(--neon-pink), var(--neon-cyan), var(--neon-pink));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 4s ease infinite;
+  filter: drop-shadow(0 0 8px var(--neon-pink-glow));
+}
+
+.gradient-rainbow {
+  background: linear-gradient(90deg, var(--neon-pink), var(--neon-yellow), var(--neon-green), var(--neon-cyan), var(--neon-pink));
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 6s ease infinite;
+  filter: drop-shadow(0 0 8px var(--neon-cyan-glow));
+}
+
+.gradient-fire {
+  background: linear-gradient(90deg, var(--neon-yellow), var(--neon-orange), var(--neon-red), var(--neon-orange), var(--neon-yellow));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 3s ease infinite;
+  filter: drop-shadow(0 0 8px var(--neon-orange-glow));
+}
+
+.gradient-ice {
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-blue), #ffffff, var(--neon-blue), var(--neon-cyan));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 5s ease infinite;
+  filter: drop-shadow(0 0 8px var(--neon-cyan-glow));
+}
+
+/* ========================================
+   FLOATING NAMES - GLOW TRAIL
+   ======================================== */
+.glow-trail {
+  position: relative;
+}
+
+.glow-trail::before,
+.glow-trail::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  pointer-events: none;
+}
+
+.glow-trail::before {
+  transform: translateY(0.5em);
+  opacity: 0.5;
+  filter: blur(5px);
+}
+
+.glow-trail::after {
+  transform: translateY(1em);
+  opacity: 0.3;
+  filter: blur(10px);
+}
+
+/* ========================================
+   FLOATING NAMES - DEPTH LAYERS
+   ======================================== */
+.depth-back {
+  opacity: 0.35;
+  filter: blur(1px);
+  z-index: 1;
+}
+
+.depth-mid {
+  opacity: 0.65;
+  z-index: 2;
+}
+
+.depth-front {
+  opacity: 1;
+  z-index: 3;
+}
+
 @keyframes typewriter {
   from { width: 0; }
   to { width: 100%; }

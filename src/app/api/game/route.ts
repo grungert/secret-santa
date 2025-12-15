@@ -12,13 +12,20 @@ import { ApiResponse, GameState, PlayerGameView } from "@/types";
 // GET: Retrieve game state
 export async function GET(
   request: NextRequest
-): Promise<NextResponse<ApiResponse<GameState | PlayerGameView>>> {
+): Promise<NextResponse<ApiResponse<GameState | PlayerGameView | string[]>>> {
   try {
     const { searchParams } = new URL(request.url);
     const playerName = searchParams.get("player");
     const isAdmin = searchParams.get("admin") === "true";
+    const publicNames = searchParams.get("publicNames") === "true";
 
     const state = await readGameState();
+
+    // Public names only - returns just participant names for intro screen
+    if (publicNames) {
+      const names = state.participants.map((p) => p.name);
+      return NextResponse.json({ success: true, data: names });
+    }
 
     // If player name provided, return player view (hides sensitive info)
     if (playerName && !isAdmin) {

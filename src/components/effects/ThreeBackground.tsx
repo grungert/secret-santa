@@ -26,11 +26,13 @@ const polar = (ang: number, r = 1): [number, number] => [r * cos(ang), r * sin(a
 interface ThreeBackgroundProps {
   musicUrl?: string;
   autoPlay?: boolean;
+  musicEnabled?: boolean;
 }
 
 export default function ThreeBackground({
   musicUrl = "/sounds/christmas-music.mp3",
-  autoPlay = true
+  autoPlay = true,
+  musicEnabled = true
 }: ThreeBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -39,6 +41,8 @@ export default function ThreeBackground({
   const animationIdRef = useRef<number>(0);
   const audioRef = useRef<THREE.Audio | null>(null);
   const analyserRef = useRef<THREE.AudioAnalyser | null>(null);
+  const audioLoadedRef = useRef(false);
+  const musicEnabledRef = useRef(musicEnabled);
   const uniformsRef = useRef({
     time: { value: 0.0 },
     step: { value: 0.0 },
@@ -361,28 +365,15 @@ export default function ThreeBackground({
     composerRef.current = composer;
 
     // Load and play audio
-    if (autoPlay && musicUrl) {
+    if (musicUrl) {
       const loader = new THREE.AudioLoader();
       loader.load(musicUrl, (buffer) => {
         audio.setBuffer(buffer);
         audio.setLoop(true);
         audio.setVolume(0.5);
+        audioLoadedRef.current = true;
 
-        // Try to play audio - handle autoplay restrictions
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-          // If play() returns a promise, handle it
-          Promise.resolve(playPromise).catch((error) => {
-            console.log("Audio autoplay blocked, waiting for user interaction:", error);
-            // Set up click handler to start audio on first user interaction
-            const startAudio = () => {
-              audio.play();
-              document.removeEventListener("click", startAudio);
-            };
-            document.addEventListener("click", startAudio);
-          });
-        }
-
+        // Set up analyser first
         const analyser = new THREE.AudioAnalyser(audio, fftSize);
         analyserRef.current = analyser;
 
@@ -393,6 +384,25 @@ export default function ThreeBackground({
           1,
           format
         );
+
+        // Only play if musicEnabled is true
+        if (autoPlay && musicEnabledRef.current) {
+          // Try to play audio - handle autoplay restrictions
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            Promise.resolve(playPromise).catch((error) => {
+              console.log("Audio autoplay blocked, waiting for user interaction:", error);
+              // Set up click handler to start audio on first user interaction
+              const startAudio = () => {
+                if (musicEnabledRef.current && !audio.isPlaying) {
+                  audio.play();
+                }
+                document.removeEventListener("click", startAudio);
+              };
+              document.addEventListener("click", startAudio);
+            });
+          }
+        }
       });
     }
 
@@ -431,8 +441,11 @@ export default function ThreeBackground({
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationIdRef.current);
 
-      if (audioRef.current && audioRef.current.isPlaying) {
-        audioRef.current.stop();
+      if (audioRef.current) {
+        if (audioRef.current.isPlaying) {
+          audioRef.current.pause();
+        }
+        audioRef.current.disconnect();
       }
 
       if (rendererRef.current) {
@@ -445,6 +458,19 @@ export default function ThreeBackground({
       }
     };
   }, [musicUrl, autoPlay, addTree, addSnow, addPlane, fftSize]);
+
+  // Control music based on musicEnabled prop
+  useEffect(() => {
+    musicEnabledRef.current = musicEnabled;
+
+    if (!audioRef.current || !audioLoadedRef.current) return;
+
+    if (musicEnabled && !audioRef.current.isPlaying) {
+      audioRef.current.play();
+    } else if (!musicEnabled && audioRef.current.isPlaying) {
+      audioRef.current.pause();
+    }
+  }, [musicEnabled]);
 
   return <div ref={containerRef} className="fixed inset-0 z-0" />;
 }
