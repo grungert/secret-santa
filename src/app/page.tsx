@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import LoginForm from "@/components/game/LoginForm";
 import AvatarGrid from "@/components/game/AvatarGrid";
@@ -47,6 +47,9 @@ export default function PlayerPage() {
 
   // Intro screen floating names
   const [introNames, setIntroNames] = useState<string[]>([]);
+
+  // Track if we've shown the reveal animation this session (to avoid showing it on every poll)
+  const hasShownRevealRef = useRef(false);
 
   // Fetch participant names for intro screen
   useEffect(() => {
@@ -99,6 +102,22 @@ export default function PlayerPage() {
 
         setGameView(view);
         setLoginError("");
+
+        // If user already revealed and we haven't shown the animation yet, show it
+        if (
+          !hasShownRevealRef.current &&
+          view.currentPlayer?.hasRevealed &&
+          view.currentPlayer.assignedToName
+        ) {
+          hasShownRevealRef.current = true;
+          setRevealData({
+            name: view.currentPlayer.assignedToName,
+            avatarId: view.currentPlayer.assignedToAvatarId || "mystery",
+            alreadyRevealed: true,
+          });
+          setShowReveal(true);
+          setIsMusicPlaying(true);
+        }
       }
     } catch {
       console.error("Failed to fetch game view");
@@ -130,6 +149,17 @@ export default function PlayerPage() {
         setGameView(data.data);
         // Resume music when logging in
         setIsMusicPlaying(true);
+
+        // If user already revealed, show the reveal animation
+        if (data.data.currentPlayer.hasRevealed && data.data.currentPlayer.assignedToName) {
+          hasShownRevealRef.current = true;
+          setRevealData({
+            name: data.data.currentPlayer.assignedToName,
+            avatarId: data.data.currentPlayer.assignedToAvatarId || "mystery",
+            alreadyRevealed: true,
+          });
+          setShowReveal(true);
+        }
       } else {
         setLoginError("Name not found. Make sure you use the exact name the admin registered!");
       }
@@ -145,6 +175,7 @@ export default function PlayerPage() {
     localStorage.removeItem(STORAGE_KEY);
     setPlayerName(null);
     setGameView(null);
+    hasShownRevealRef.current = false; // Reset so animation shows again on next login
     // Stop music using global function
     console.log("window.stopSecretSantaMusic exists:", !!window.stopSecretSantaMusic);
     if (typeof window !== "undefined" && window.stopSecretSantaMusic) {
