@@ -21,8 +21,8 @@ export default function GlitchText({
   const [isGlitching, setIsGlitching] = useState(continuous);
 
   useEffect(() => {
+    // If continuous mode, state is already initialized to true, no need for intervals
     if (continuous) {
-      setIsGlitching(true);
       return;
     }
 

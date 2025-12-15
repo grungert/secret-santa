@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import ParticipantForm from "@/components/admin/ParticipantForm";
 import ParticipantList from "@/components/admin/ParticipantList";
 import GameControls from "@/components/admin/GameControls";
@@ -200,12 +201,12 @@ export default function AdminPage() {
 
         {/* Footer link */}
         <div className="text-center">
-          <a
+          <Link
             href="/"
             className="text-neon-cyan hover:text-neon-pink transition-colors"
           >
             ← Go to Player Page
-          </a>
+          </Link>
         </div>
       </div>
     </main>

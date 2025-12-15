@@ -27,13 +27,14 @@ const REVEAL_VIDEOS = [
   "/imgs/video7.mp4",
 ];
 
-// Neon confetti piece component
+// Neon confetti piece component - use seeded values based on index for purity
 function ConfettiPiece({ index }: { index: number }) {
   const colors = ["#39ff14", "#ff00ff", "#00ffff", "#ffff00", "#ff6600"];
   const color = colors[index % colors.length];
-  const left = Math.random() * 100;
-  const delay = Math.random() * 2;
-  const duration = 2 + Math.random() * 2;
+  // Use deterministic values based on index to avoid impure Math.random() in render
+  const left = ((index * 17) % 100);
+  const delay = ((index * 7) % 20) / 10;
+  const duration = 2 + ((index * 13) % 20) / 10;
 
   return (
     <div
@@ -70,20 +71,25 @@ export default function RevealModal({
   // Reset states when modal opens/closes
   useEffect(() => {
     if (isOpen) {
-      setShowVideo(true);
-      setVideoLoading(true);
-      setAnimationStage(0);
-      setShowConfetti(false);
-      setVideoKey(prev => prev + 1); // Force video remount
-      // Select random video
-      const randomVideo = REVEAL_VIDEOS[Math.floor(Math.random() * REVEAL_VIDEOS.length)];
-      setVideoSrc(randomVideo);
+      // Use queueMicrotask to avoid synchronous setState in effect
+      queueMicrotask(() => {
+        setShowVideo(true);
+        setVideoLoading(true);
+        setAnimationStage(0);
+        setShowConfetti(false);
+        setVideoKey(prev => prev + 1); // Force video remount
+        // Select random video
+        const randomVideo = REVEAL_VIDEOS[Math.floor(Math.random() * REVEAL_VIDEOS.length)];
+        setVideoSrc(randomVideo);
+      });
     } else {
       // Also reset when modal closes (safeguard for stale state)
-      setShowVideo(true);
-      setVideoLoading(true);
-      setAnimationStage(0);
-      setShowConfetti(false);
+      queueMicrotask(() => {
+        setShowVideo(true);
+        setVideoLoading(true);
+        setAnimationStage(0);
+        setShowConfetti(false);
+      });
     }
   }, [isOpen]);
 

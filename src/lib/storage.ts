@@ -7,9 +7,6 @@ const DATA_DIR = path.join(process.cwd(), "data");
 const GAME_STATE_FILE = path.join(DATA_DIR, "game-state.json");
 const LOCK_FILE = path.join(DATA_DIR, "game-state.lock");
 
-// Simple mutex lock for file operations
-let lockPromise: Promise<void> = Promise.resolve();
-
 async function acquireLock(): Promise<void> {
   const maxRetries = 50;
   const retryDelay = 100; // ms

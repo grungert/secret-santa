@@ -52,7 +52,7 @@ export async function POST(
     const body = await request.json();
     const { action, name, participantId } = body;
 
-    let state = await readGameState();
+    const state = await readGameState();
     let result: { state: GameState; error?: string };
 
     switch (action) {

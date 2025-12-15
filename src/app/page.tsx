@@ -7,7 +7,6 @@ import AvatarGrid from "@/components/game/AvatarGrid";
 import ChosenAvatarsSidebar from "@/components/game/ChosenAvatarsSidebar";
 import RevealModal from "@/components/game/RevealModal";
 import PixelCard from "@/components/ui/PixelCard";
-import PixelAvatar from "@/components/game/PixelAvatar";
 import GlitchText from "@/components/effects/GlitchText";
 import PixelButton from "@/components/ui/PixelButton";
 import FloatingNames from "@/components/effects/FloatingNames";
